@@ -1,0 +1,1214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Drishti: a live, map-first situation desk for India: air quality, fires, earthquakes, weather, official alerts, news, world events and government schemes, state by state.">
+<meta property="og:title" content="Drishti India Desk">
+<meta property="og:description" content="Live map of what is happening across India, state by state.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.5 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Drishti India Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Tiro+Devanagari+Hindi&display=swap">
+<style>
+/* Layout: full-bleed India map is the instrument. Floating layer console left, national pulse chips on top, dossier/signals drawer right, ticker along the bottom edge; domain panels continue below the fold. */
+:root{
+  --bg:#081317; --surface:#0F2228; --surface-2:#15303A; --line:#21424C; --glass:rgba(12,29,35,.86);
+  --fg:#E6EFEC; --muted:#8FA9A6; --faint:#5C7A79;
+  --accent:#F2A33A; --accent-ink:#1A1206; --peacock:#2FB6A8;
+  --good:#46C287; --warn:#E9C24A; --high:#F0803C; --crit:#E5484D;
+  --ocean:#06141A; --grat:rgba(143,169,166,.07); --nb:#102730; --nb-line:#1E3E48; --st-line:rgba(8,19,23,.75); --dt-line:rgba(8,19,23,.35); --india-edge:#F2A33A;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --f-deva:"Tiro Devanagari Hindi","Noto Serif Devanagari",serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#EAF0EE; --surface:#FFFFFF; --surface-2:#F1F6F4; --line:#D3E0DD; --glass:rgba(255,255,255,.9);
+  --fg:#0E2328; --muted:#4D6966; --faint:#86A09D; --accent:#B85F00; --accent-ink:#FFFFFF; --peacock:#0E8C80;
+  --good:#1E9A5E; --warn:#A87F00; --high:#C75A14; --crit:#C8303A;
+  --ocean:#D7E6EA; --grat:rgba(14,35,40,.06); --nb:#EEF2EF; --nb-line:#C4D3D0; --st-line:rgba(255,255,255,.85); --dt-line:rgba(255,255,255,.45); --india-edge:#B85F00; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#EAF0EE; --surface:#FFFFFF; --surface-2:#F1F6F4; --line:#D3E0DD; --glass:rgba(255,255,255,.9);
+  --fg:#0E2328; --muted:#4D6966; --faint:#86A09D; --accent:#B85F00; --accent-ink:#FFFFFF; --peacock:#0E8C80;
+  --good:#1E9A5E; --warn:#A87F00; --high:#C75A14; --crit:#C8303A;
+  --ocean:#D7E6EA; --grat:rgba(14,35,40,.06); --nb:#EEF2EF; --nb-line:#C4D3D0; --st-line:rgba(255,255,255,.85); --dt-line:rgba(255,255,255,.45); --india-edge:#B85F00; color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.lbl{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:16px;flex-wrap:wrap;min-height:54px}
+.brand{display:flex;align-items:baseline;gap:9px}
+.brand .deva{font-family:var(--f-deva);font-size:25px;color:var(--accent);line-height:1}
+.brand b{font-family:var(--f-display);font-weight:800;font-size:19px;letter-spacing:-.01em}
+.brand small{color:var(--muted);font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--accent);color:var(--accent)}
+.pill .led{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 2s infinite}
+@keyframes blink{50%{opacity:.25}}
+.clock{display:flex;gap:16px;margin-left:auto;align-items:center;flex-wrap:wrap}
+.clock .t{font-family:var(--f-mono);font-size:17px;font-weight:500;line-height:1.1}
+.clock .d{font-size:11.5px;color:var(--muted);line-height:1.3}
+.iconbtn{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:12px}
+.iconbtn:hover{border-color:var(--accent)}
+
+/* stage */
+.stage{position:relative;height:calc(100svh - 55px - env(safe-area-inset-top,0px));min-height:600px;background:var(--ocean);overflow:hidden;border-bottom:1px solid var(--line)}
+#map{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#map .st{stroke:var(--st-line);stroke-width:.8;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .5s}
+#map .st:hover{filter:brightness(1.18)}
+#map .st.sel{stroke:var(--fg);stroke-width:2.2}
+#map .dt{stroke:var(--dt-line);stroke-width:.5;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .5s}
+#map .dt:hover{filter:brightness(1.22)}
+#map .dt.sel{stroke:var(--fg);stroke-width:1.6}
+#map .nb{fill:var(--nb);stroke:var(--nb-line);stroke-width:.6;vector-effect:non-scaling-stroke}
+#map .edge{fill:none;stroke:var(--india-edge);stroke-width:1.4;vector-effect:non-scaling-stroke;opacity:.9}
+#map .grat{fill:none;stroke:var(--grat);stroke-width:1;vector-effect:non-scaling-stroke}
+#map .nbl{fill:var(--faint);font:italic 500 11px var(--f-body);letter-spacing:.25em;text-transform:uppercase;pointer-events:none}
+#map .stl{font:800 11px var(--f-display);pointer-events:none;paint-order:stroke;stroke-width:3px;stroke-linejoin:round}
+#map .cityl{font:500 10.5px var(--f-body);fill:var(--fg);paint-order:stroke;stroke:var(--ocean);stroke-width:3px;pointer-events:none}
+#map .pt{cursor:pointer}
+#map .halo{transform-box:fill-box;transform-origin:center;animation:halo 2.2s ease-out infinite}
+@keyframes halo{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4);opacity:0}}
+#map .fog{fill:rgba(220,232,235,.18);filter:url(#blur);pointer-events:none}
+#map .cone{fill:rgba(240,128,60,.14);stroke:rgba(240,128,60,.6);stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+#map .track{fill:none;stroke:var(--high);stroke-width:2;stroke-dasharray:6 5;vector-effect:non-scaling-stroke}
+.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px}
+
+.ov{position:absolute;z-index:5;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px}
+.ov-top{top:12px;left:max(12px,env(safe-area-inset-left,0px));right:404px;display:flex;gap:8px;flex-wrap:wrap;background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none}
+.pulsebox{pointer-events:auto;display:flex;align-items:center;gap:12px;padding:8px 14px 8px 8px}
+.pulsebox svg{width:52px;height:52px;flex:none}
+.pulsebox .big{font-family:var(--f-display);font-weight:800;font-size:30px;line-height:1}
+.gchip{pointer-events:auto;display:grid;gap:2px;padding:7px 11px;min-width:104px;text-align:left}
+.gchip:hover{border-color:var(--faint)}
+.gchip .v{font-family:var(--f-mono);font-size:17px;font-weight:500;line-height:1.1}
+.gchip .bar{height:3px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.gchip .bar i{display:block;height:100%}
+
+.ov-layers{top:96px;left:max(12px,env(safe-area-inset-left,0px));width:236px;padding:12px;display:grid;gap:12px;max-height:calc(100% - 330px);overflow:auto}
+.ov-layers h3{margin:0;font-family:var(--f-display);font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.seg button,.chorobtn{background:transparent;border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:12px;color:var(--muted);text-align:left}
+.seg button[aria-pressed="true"],.chorobtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.choro{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.ovl{display:grid;gap:2px}
+.ovl label{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:3px 2px;cursor:pointer}
+.ovl input{accent-color:var(--accent);margin:0}
+.ovl .sym{width:12px;height:12px;flex:none;display:inline-grid;place-items:center}
+.ovl .ct{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.collapse{display:none}
+.collapse-body{display:grid;gap:12px}
+[hidden]{display:none!important}
+.pulsebox,.gchip{position:relative}
+
+.ov-legend{left:max(12px,env(safe-area-inset-left,0px));bottom:110px;padding:9px 12px;display:grid;gap:6px;max-width:min(420px,calc(100% - 430px));min-width:220px}
+.legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.legend .sw{display:flex;gap:1px}
+.legend .sw span{display:inline-block;height:9px;width:20px;font-size:0}
+.legend .k{display:flex;flex-wrap:wrap;gap:4px 8px}
+.legend .k span{display:inline-flex;align-items:center;gap:4px}
+.legend .k i{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+.ov-zoom{right:404px;bottom:110px;display:grid;padding:3px;gap:3px}
+.ov-zoom button{width:32px;height:32px;border-radius:8px;border:0;background:transparent;font-size:16px;font-weight:600}
+.ov-zoom button:hover{background:var(--surface-2)}
+.ov-coord{right:450px;bottom:110px;padding:5px 9px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+
+.drawer{position:absolute;z-index:6;top:12px;right:max(12px,env(safe-area-inset-right,0px));bottom:52px;width:380px;display:flex;flex-direction:column;overflow:hidden}
+.tabs{display:flex;border-bottom:1px solid var(--line);flex:none;overflow-x:auto;scrollbar-width:none}
+.tabs button{flex:1 0 auto;background:none;border:0;padding:10px 7px;font-size:11.5px;white-space:nowrap;font-weight:600;color:var(--muted);border-bottom:2px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+.tabpane{padding:14px;overflow:auto;flex:1;min-height:0}
+
+.ticker{position:absolute;z-index:6;left:0;right:0;bottom:0;height:40px;background:var(--surface);border-top:1px solid var(--line);display:flex;align-items:center;overflow:hidden}
+.ticker .tag{position:relative;z-index:2;flex:none;height:100%;display:flex;align-items:center;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:12px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.ticker .run{display:flex;gap:34px;white-space:nowrap;animation:run 140s linear infinite;padding-left:24px}
+.ticker:hover .run{animation-play-state:paused}
+.ticker .run button{background:none;border:0;padding:0;font-size:12.5px;display:inline-flex;align-items:center;gap:7px}
+.ticker .run button:hover{color:var(--accent)}
+.ticker .run i{width:7px;height:7px;border-radius:50%;display:inline-block}
+@keyframes run{to{transform:translateX(-50%)}}
+
+.ov-time{left:max(12px,env(safe-area-inset-left,0px));right:404px;bottom:50px;display:flex;align-items:center;gap:12px;padding:8px 12px}
+.ov-time button{width:34px;height:34px;flex:none;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:13px;font-weight:700}
+.ov-time button:disabled{background:var(--surface-2);color:var(--faint);cursor:not-allowed}
+.ov-time input{flex:1;min-width:0;accent-color:var(--accent)}
+.ov-time .tl{flex:none;width:190px;line-height:1.25}
+.ov-time .tl b{font-family:var(--f-mono);font-weight:500;font-size:13px;display:block}
+.ov-time .tl span{font-size:10.5px;color:var(--muted)}
+.livedot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-left:5px;vertical-align:1px;background:var(--good)}
+.chorobtn[aria-pressed="true"] .livedot{background:var(--accent-ink)}
+.src-line{font-size:10.5px;color:var(--muted)}
+.src-line i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:0}
+.badge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.badge.live{border-color:var(--good);color:var(--good)}
+.place{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:6px;margin-top:8px}
+.place .kv2{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.place .kv2 div{background:var(--surface-2);border-radius:7px;padding:5px 7px;font-size:11px;color:var(--muted)}
+.place .kv2 b{display:block;font-family:var(--f-mono);font-weight:500;font-size:13px;color:var(--fg)}
+.linkbtn{background:none;border:0;padding:0;color:var(--peacock);font-size:12px;font-weight:600}
+.linkbtn:hover{text-decoration:underline}
+.cmp{width:100%;font-size:12.5px}
+.cmp td{padding:6px 4px;border-bottom:1px solid var(--line)}
+.cmp td.n{font-family:var(--f-mono)}
+.cmp td.win{color:var(--accent);font-weight:600}
+.addrow{display:flex;gap:6px;margin-top:8px}
+.addrow select{flex:1;min-width:0;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+kbd{font-family:var(--f-mono);font-size:10.5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px;background:var(--surface-2)}
+.tip{position:absolute;z-index:20;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:260px}
+.tip b{display:block;font-size:12.5px}
+
+/* dossier */
+.dos-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.dos-code{font-family:var(--f-display);font-weight:800;font-size:40px;line-height:.9;color:var(--accent)}
+.dos-name{font-family:var(--f-display);font-weight:700;font-size:21px;line-height:1.15;text-wrap:balance}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.fact{background:var(--surface-2);border-radius:9px;padding:7px 9px;min-width:0}
+.fact b{display:block;font-family:var(--f-mono);font-weight:500;font-size:13px;overflow-wrap:anywhere}
+.metrics{display:grid;gap:7px}
+.metric{display:grid;grid-template-columns:110px 1fr 52px;gap:8px;align-items:center;font-size:12px}
+.metric .track{height:7px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.metric .track i{display:block;height:100%;border-radius:4px}
+.metric .rk{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:11.5px;padding:2px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);color:var(--fg)}
+button.chip:hover{border-color:var(--accent)}
+.sect{margin-top:14px;display:grid;gap:6px}
+.dtl{display:grid;gap:2px}
+.dtl button{display:grid;grid-template-columns:1fr 70px 44px;gap:8px;align-items:center;background:none;border:0;padding:4px 0;font-size:12px;text-align:left}
+.dtl button:hover span:first-child{color:var(--accent)}
+.dtl .mini{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.dtl .mini i{display:block;height:100%}
+.crumb{background:none;border:0;padding:0;color:var(--peacock);font-size:12px;font-weight:600}
+
+/* stream */
+.ev{display:grid;grid-template-columns:4px 1fr;gap:10px;padding:9px 0;border-top:1px solid var(--line);background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%}
+.ev:first-child{border-top:0}
+.ev:hover .et{color:var(--accent)}
+.ev .sev{border-radius:2px}
+.ev .et{font-weight:500;font-size:13px;line-height:1.4}
+.ev .em{font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.ev.new .et::before{content:"NEW";font-size:9px;font-weight:700;letter-spacing:.08em;background:var(--accent);color:var(--accent-ink);padding:1px 5px;border-radius:4px;margin-right:6px;vertical-align:2px}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.filters button{background:transparent;border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--muted)}
+.filters button[aria-pressed="true"]{border-color:var(--peacock);color:var(--fg);background:var(--surface-2)}
+.search{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin-bottom:8px}
+.brief{display:grid;gap:10px}
+.brief .lead{font-family:var(--f-display);font-size:17px;line-height:1.35;font-weight:500;text-wrap:balance}
+.brief ul{margin:0;padding-left:16px;display:grid;gap:7px;font-size:13px}
+.conf{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:1px 5px;border-radius:4px;margin-right:4px;border:1px solid currentColor}
+
+/* below fold */
+.wrap{max-width:1480px;margin:0 auto;padding-block:22px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+.wrap>h2{font-family:var(--f-display);font-size:22px;margin:0}
+.panels{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.span2{grid-column:span 2}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.card h2{font-family:var(--f-display);font-size:16px;font-weight:700;margin:0}
+.card-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.card-h .sub{font-size:12px;color:var(--muted);margin-top:2px}
+.src{font-size:10.5px;color:var(--faint);font-family:var(--f-mono);margin-top:10px}
+.list{display:grid;margin:0;padding:0;list-style:none}
+.list li{display:grid;gap:3px;padding:9px 0;border-top:1px solid var(--line)}
+.list li:first-child{border-top:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.row .nm{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.meter{display:flex;gap:3px}
+.meter i{width:12px;height:8px;border-radius:2px;background:var(--surface-2)}
+.hbar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;margin-top:4px}
+.hbar i{display:block;height:100%;border-radius:3px}
+.mk{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.mk:first-child{border-top:0}
+.mk .p{font-family:var(--f-mono);font-size:15px;text-align:right}
+.mk .ch{font-family:var(--f-mono);font-size:11.5px;text-align:right}
+.up{color:var(--good)} .dn{color:var(--crit)}
+.spark{grid-column:1/-1;display:block;width:100%;height:30px;color:var(--peacock)}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:6px 8px 6px 0;border-bottom:1px solid var(--line)}
+td{padding:7px 8px 7px 0;border-bottom:1px solid var(--line)}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.freq-scale{position:relative;height:30px;border-radius:8px;background:linear-gradient(90deg,var(--crit) 0%,var(--warn) 25%,var(--good) 40%,var(--good) 62%,var(--warn) 80%,var(--crit) 100%);opacity:.85}
+.freq-scale .needle{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--fg);border-radius:2px;transition:left .8s ease}
+.freq-ticks{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.big2{font-family:var(--f-display);font-weight:700;font-size:30px;line-height:1}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.kv div{background:var(--surface-2);border-radius:10px;padding:9px 10px}
+.kv b{display:block;font-family:var(--f-mono);font-size:17px;font-weight:500}
+.form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:end}
+.form label{display:grid;gap:4px;font-size:11px;color:var(--muted);min-width:0}
+.form select,.form input{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 8px;min-width:0;width:100%}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:8px 12px;font-weight:600}
+.rule{display:grid;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
+.rule .x{background:none;border:0;color:var(--muted);font-size:12px}
+.rule .x:hover{color:var(--crit)}
+.trig{color:var(--crit);font-weight:600;font-size:12px}
+.ok{color:var(--good);font-weight:600;font-size:12px}
+.srcgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.srcgrid div{border:1px dashed var(--line);border-radius:10px;padding:10px}
+.srcgrid b{font-size:13px}
+.srcgrid p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);max-width:90ch}
+.deskh{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.deskh h2{font-family:var(--f-display);font-size:22px;margin:0}
+.wgrid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px}
+.wreg{display:grid;gap:3px;width:100%;background:none;border:0;border-radius:8px;padding:6px 8px;text-align:left;font-size:12.5px}
+.wreg:hover,.wreg[aria-pressed="true"]{background:var(--surface-2)}
+.wlink{color:var(--fg);text-decoration:none;font-size:13px;font-weight:500}
+.wlink:hover{color:var(--accent)}
+#worldList,#socialList{max-height:520px;overflow:auto}
+.schgrid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px}
+.schlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;align-content:start;max-height:640px;overflow:auto;padding-right:4px}
+.sch{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:5px;align-content:start}
+#schNews{max-height:600px;overflow:auto}
+@media (max-width:760px){.wgrid,.schgrid{grid-template-columns:1fr}}
+.toast{position:fixed;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));top:calc(70px + env(safe-area-inset-top,0px));background:var(--fg);color:var(--bg);padding:8px 13px;border-radius:10px;font-size:12.5px;z-index:40}
+
+@media (max-width:1100px){.ov-top .gchip:nth-child(n+5){display:none}}
+@media (max-width:900px){
+  .stage{height:auto;min-height:0;overflow:visible;border-bottom:0}
+  .mapbox{position:relative;height:68svh;min-height:420px;overflow:hidden}
+  .drawer{position:static;width:auto;border-radius:0;border-left:0;border-right:0;max-height:none;backdrop-filter:none;background:var(--surface)}
+  .tabpane{max-height:70svh}
+  .ov-top{right:12px}.ov-top .gchip{display:none}
+  .ov-layers{top:76px;width:210px;max-height:calc(100% - 140px)}
+  .ov-layers.closed .collapse-body{display:none}
+  .collapse{display:inline-block}
+  .ov-zoom{right:12px;bottom:110px}.ov-coord{display:none}.ov-time{right:12px}.ov-time .tl{width:120px}.ov-time .tl span{display:none}
+  .ov-legend{max-width:calc(100% - 70px);min-width:0}
+  .span2{grid-column:auto}.panels{grid-template-columns:1fr}.form{grid-template-columns:1fr 1fr}
+}
+@media (min-width:901px){.mapbox{position:absolute;inset:0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="deva" aria-hidden="true">दृष्टि</span><b>Drishti</b><small>India situation desk</small></div>
+    <span class="pill" id="feedPill" title="Connecting to live feeds"><span class="led"></span><span id="feedTxt">Connecting…</span></span>
+    <div class="clock">
+      <div><div class="t" id="clk">--:--:--</div><div class="d">IST · UTC+05:30</div></div>
+      <div class="d"><span id="greg"></span><br><span id="saka"></span></div>
+      <button class="iconbtn" id="themeBtn" type="button">Theme</button>
+    </div>
+  </div>
+</header>
+
+<section class="stage" aria-label="India map">
+  <div class="mapbox" id="mapbox">
+    <svg id="map" role="img" aria-label="Interactive map of India by state and district"></svg>
+    <div class="loading" id="loading">Loading the map of India…</div>
+
+    <div class="ov ov-top" id="ovTop"></div>
+
+    <div class="ov ov-layers" id="ovLayers">
+      <h3>Map layers <button type="button" class="iconbtn collapse" id="layersToggle" aria-expanded="true">Hide</button></h3>
+      <div class="collapse-body">
+        <div style="display:grid;gap:6px"><span class="lbl">Shade by</span><div class="choro" id="choro"></div></div>
+        <div style="display:grid;gap:6px"><span class="lbl">Detail</span><div class="seg" id="gran">
+          <button type="button" data-g="state" aria-pressed="true">States</button><button type="button" data-g="district" aria-pressed="false">Districts</button></div></div>
+        <div style="display:grid;gap:6px"><span class="lbl">Overlays</span><div class="ovl" id="ovl"></div></div>
+      </div>
+    </div>
+
+    <div class="ov ov-legend" id="legend"></div>
+    <div class="ov ov-coord num" id="coord">—</div>
+    <div class="ov ov-zoom">
+      <button type="button" id="zin" aria-label="Zoom in">+</button>
+      <button type="button" id="zout" aria-label="Zoom out">−</button>
+      <button type="button" id="zreset" aria-label="Show all of India" title="All India" style="font-size:11px">IN</button>
+    </div>
+    <div class="tip" id="tip" hidden></div>
+
+    <div class="ov ov-time" id="timebar">
+      <button type="button" id="play" aria-label="Play the last 72 hours" disabled>▶</button>
+      <label for="slider" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Time</label>
+      <input type="range" id="slider" min="0" max="71" step="1" value="71" disabled>
+      <div class="tl"><b id="tlabel">Now</b><span id="tsub">Time travel needs live data</span></div>
+    </div>
+    <div class="ticker" aria-label="Latest signals"><span class="tag">Live wire</span><div class="run" id="ticker"></div></div>
+  </div>
+
+  <aside class="ov drawer" id="drawer">
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-t="dossier" aria-selected="true">Dossier</button>
+      <button type="button" role="tab" data-t="signals" aria-selected="false">Signals <span class="num" id="sigCount"></span></button>
+      <button type="button" role="tab" data-t="brief" aria-selected="false">Brief</button>
+      <button type="button" role="tab" data-t="places" aria-selected="false">Places</button>
+      <button type="button" role="tab" data-t="compare" aria-selected="false">Compare</button>
+    </div>
+    <div class="tabpane" id="pane-dossier" role="tabpanel"></div>
+    <div class="tabpane" id="pane-signals" role="tabpanel" hidden>
+      <div class="row" style="margin-bottom:8px"><span class="note" id="streamCount"></span><button class="iconbtn" id="streamBtn" type="button" aria-pressed="true">Pause</button></div>
+      <input class="search" id="q" type="search" placeholder="Search signals, states, sources">
+      <div class="filters" id="filters" role="group" aria-label="Signal domains"></div>
+      <div id="stream"></div>
+    </div>
+    <div class="tabpane" id="pane-brief" role="tabpanel" hidden>
+      <span class="lbl">Morning brief · 06:00 IST cycle · analyst draft</span>
+      <div class="brief" id="brief" style="margin-top:8px"></div>
+      <p class="note" style="margin-top:14px">Shortcuts: <kbd>1</kbd>–<kbd>8</kbd> layers · <kbd>/</kbd> search · <kbd>Space</kbd> play · <kbd>[</kbd> <kbd>]</kbd> step hours · <kbd>D</kbd> districts · <kbd>Esc</kbd> all India</p>
+    </div>
+    <div class="tabpane" id="pane-places" role="tabpanel" hidden></div>
+    <div class="tabpane" id="pane-compare" role="tabpanel" hidden></div>
+  </aside>
+</section>
+
+<main class="wrap">
+  <div class="deskh"><h2 id="deskTitle">Domain desks · All India</h2><button type="button" class="iconbtn" id="clearFocus" hidden>Show all India</button></div>
+  <p class="note" style="margin:-6px 0 0">Pick a state on the map to drill down: signals, ticker, air, quakes, weather, social posts and schemes all follow it.</p>
+  <section class="panels">
+    <div class="card span2" id="worldCard">
+      <div class="card-h"><div><h2>World → India</h2><div class="sub">International developments that touch India, by region and by channel</div></div><span class="badge" data-feed2="world">Waiting</span></div>
+      <div class="filters" id="worldF"></div>
+      <div class="wgrid"><div id="worldRegions" style="display:grid;gap:2px;align-content:start"></div><ul class="list" id="worldList"></ul></div>
+      <div class="src">wire: Google News, international press mentioning India · turn on the “World → India” overlay to shade neighbours on the map</div>
+    </div>
+    <div class="card" id="socialCard">
+      <div class="card-h"><div><h2>Social pulse</h2><div class="sub">Public posts from Indian news accounts and hashtags</div></div><span class="badge" data-feed2="social">Waiting</span></div>
+      <div class="filters" id="socialF"></div>
+      <ul class="list" id="socialList"></ul>
+      <p class="note" style="margin-top:8px">X (Twitter) is not included: its API needs a paid key. Add one and it slots in here.</p>
+      <div class="src">wire: Bluesky public news accounts · Mastodon hashtags</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Frontier watch</h2><div class="sub">Land borders and maritime zone, 5-step readiness meter</div></div><span class="badge">Sample</span></div>
+      <ul class="list" id="frontiers"></ul>
+      <div class="src">wire: MEA · MoD/PIB · BSF/ITBP/AR releases · Indian Navy IFC-IOR</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Seismic log</h2><div class="sub">Last 7 days, M ≥ 2.5, India and neighbourhood</div></div><span class="badge" data-feed="quakes">Sample</span></div>
+      <div class="tbl-wrap"><table id="quakes"><thead><tr><th>Time</th><th>Region</th><th class="n">Mag</th><th class="n">Depth km</th></tr></thead><tbody></tbody></table></div>
+      <div class="src">wire: National Center for Seismology (NCS) · USGS</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Air quality</h2><div class="sub">Worst cities at the selected hour, Indian NAQI bands</div></div><span class="badge" data-feed="air">Sample</span></div>
+      <ul class="list" id="aqi"></ul>
+      <div class="src">wire: CPCB CAAQMS · SAFAR · CAQM GRAP orders</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Sky &amp; sea</h2><div class="sub">Temperature extremes, rain, cyclones and fires</div></div><span class="badge" data-feed="weather">Sample</span></div>
+      <ul class="list" id="weather"></ul>
+      <div class="src">wire: IMD RSMC New Delhi · NASA FIRMS VIIRS · INCOIS</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Markets</h2><div class="sub">Session snapshot with 30-session trend</div></div><span class="badge">Sample</span></div>
+      <div id="markets"></div>
+      <div class="src">wire: NSE · BSE · RBI reference rate · MCX · CCIL</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Power grid</h2><div class="sub">All-India frequency, demand and regional load</div></div><span class="badge">Sample</span></div>
+      <div style="display:grid;gap:6px">
+        <div class="row"><div><span class="lbl">Frequency</span><div class="big2 num" id="hz">50.00</div></div><div style="text-align:right"><span class="lbl">Demand met</span><div class="big2 num" id="gw">--</div></div></div>
+        <div class="freq-scale" aria-hidden="true"><div class="needle" id="needle"></div></div>
+        <div class="freq-ticks"><span>49.80</span><span>49.90</span><span>50.00</span><span>50.05</span><span>50.20 Hz</span></div>
+      </div>
+      <div class="tbl-wrap" style="margin-top:12px"><table id="regions"><thead><tr><th>Region</th><th class="n">GW</th><th class="n">Δ y/y</th><th class="n">RE share</th></tr></thead><tbody></tbody></table></div>
+      <div class="src">wire: Grid-India · CEA daily report · IEX</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Movement</h2><div class="sub">Rail punctuality by zone and metro airports</div></div><span class="badge">Sample</span></div>
+      <div class="tbl-wrap"><table id="rail"><thead><tr><th>Rail zone</th><th class="n">On time</th><th class="n">Late &gt;1h</th></tr></thead><tbody></tbody></table></div>
+      <div class="tbl-wrap" style="margin-top:12px"><table id="air"><thead><tr><th>Airport</th><th class="n">Moves</th><th class="n">Avg delay</th></tr></thead><tbody></tbody></table></div>
+      <div class="src">wire: NTES / CRIS · DGCA · AAI</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Digital India</h2><div class="sub">Payment rails, advisories and outages</div></div><span class="badge">Sample</span></div>
+      <div class="kv" id="digital"></div>
+      <ul class="list" id="outages" style="margin-top:10px"></ul>
+      <div class="src">wire: NPCI · CERT-In · Downdetector IN · Cloudflare Radar (IN)</div>
+    </div>
+    <div class="card">
+      <div class="card-h"><div><h2>Fields &amp; mandis</h2><div class="sub">Rabi sowing vs normal, and kitchen staples</div></div><span class="badge">Sample</span></div>
+      <div id="sowing"></div>
+      <div class="tbl-wrap" style="margin-top:12px"><table id="mandi"><thead><tr><th>Commodity</th><th>Mandi</th><th class="n">₹/qtl</th><th class="n">w/w</th></tr></thead><tbody></tbody></table></div>
+      <div class="src">wire: Agriculture Ministry · Agmarknet · DoCA price monitoring</div>
+    </div>
+    <div class="card span2" id="schemesCard">
+      <div class="card-h"><div><h2>Government schemes</h2><div class="sub">Major national schemes, state flagship schemes and the latest scheme news</div></div><span class="badge">Curated · Nov 2026</span></div>
+      <div class="filters" id="schTabs"></div>
+      <div class="filters" id="schSec"></div>
+      <input class="search" id="schQ" type="search" placeholder="Search schemes: pension, farmers, housing, girls…">
+      <div class="schgrid"><div id="schList" class="schlist"></div><div><span class="lbl">Scheme news · 48 h</span><ul class="list" id="schNews"></ul></div></div>
+      <p class="note" id="schNote" style="margin-top:10px"></p>
+    </div>
+    <div class="card span2">
+      <div class="card-h"><div><h2>Watch rules</h2><div class="sub">Trip a rule when a layer crosses your threshold. Tripped states glow on the map. Saved in this browser.</div></div></div>
+      <form class="form" id="ruleForm">
+        <label for="rLayer">Layer<select id="rLayer"></select></label>
+        <label for="rScope">Where<select id="rScope"></select></label>
+        <label for="rOp">Condition<select id="rOp"><option value="gt">above</option><option value="lt">below</option></select></label>
+        <label for="rVal">Threshold<input id="rVal" type="number" step="any" value="300"></label>
+        <button class="btn" type="submit" style="grid-column:1/-1;justify-self:start">Add rule</button>
+      </form>
+      <div id="rules" style="margin-top:8px"></div>
+    </div>
+    <div class="card span2">
+      <div class="card-h"><div><h2>Feeds this desk is built to take</h2><div class="sub">Live today: CAMS air via Open-Meteo, Open-Meteo weather, NASA FIRMS, USGS, GDACS, NDMA SACHET, RBI, PIB, Google News, GDELT, Bluesky and Mastodon. Below are the Indian sources the remaining sample panels are designed to read.</div></div></div>
+      <div class="srcgrid" id="sources"></div><div id="feedStatus" style="margin-top:12px"></div>
+    </div>
+  </section>
+  <p class="note">Live layers: air quality (CAMS model via Open-Meteo, converted to the Indian NAQI), weather (Open-Meteo), fires (NASA FIRMS VIIRS), earthquakes (USGS), cyclones (GDACS) and news signals (GDELT, Indian English-language press). They refresh hourly. Panels marked Sample still show illustrative values. State and district boundaries come from the open india-maps-data project (2019 boundaries) and are simplified for display; neighbouring countries are shown only for context.</p>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var inr=new Intl.NumberFormat("en-IN"), inr2=new Intl.NumberFormat("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function toast(t){var el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(function(){el.hidden=true},2600)}
+
+/* theme */
+var root=document.documentElement, saved=store("drishti-theme"); if(saved)root.setAttribute("data-theme",saved);
+$("#themeBtn").addEventListener("click",function(){var cur=root.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
+  var nx=cur==="dark"?"light":"dark";root.setAttribute("data-theme",nx);store("drishti-theme",nx);if(mapReady)paint()});
+
+/* clock + Saka */
+var SAKA=["Chaitra","Vaishakha","Jyaishtha","Ashadha","Shravana","Bhadra","Ashvin","Kartika","Agrahayana","Pausha","Magha","Phalguna"];
+function leap(y){return (y%4===0&&y%100!==0)||y%400===0}
+function istParts(){var p={};new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).formatToParts(new Date()).forEach(function(x){p[x.type]=x.value});return p}
+function saka(y,m,d){var g=y,start=Date.UTC(g,2,leap(g)?21:22),cur=Date.UTC(y,m-1,d);if(cur<start){g=y-1;start=Date.UTC(g,2,leap(g)?21:22)}
+  var idx=Math.round((cur-start)/864e5),lens=[leap(g)?31:30,31,31,31,31,31,30,30,30,30,30,30];for(var i=0;i<12;i++){if(idx<lens[i])return {d:idx+1,m:SAKA[i],y:g-78};idx-=lens[i]}return {d:1,m:SAKA[0],y:g-77}}
+function tick(){var p=istParts();$("#clk").textContent=p.hour+":"+p.minute+":"+p.second;
+  $("#greg").textContent=new Date(Date.UTC(+p.year,+p.month-1,+p.day)).toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
+  var s=saka(+p.year,+p.month,+p.day);$("#saka").textContent="Saka "+s.d+" "+s.m+" "+s.y}
+tick();setInterval(tick,1000);
+
+/* ---------- states ---------- */
+var S=[
+["JK","Jammu & Kashmir","UT","Srinagar / Jammu",12.27,42241,"V","Pakistan (LoC), China",0,"North"],
+["LA","Ladakh","UT","Leh",0.27,59146,"V","China (LAC), Pakistan",0,"North"],
+["CH","Chandigarh","UT","Chandigarh",1.06,114,"IV","—",0,"North"],
+["PB","Punjab","State","Chandigarh",27.74,50362,"IV","Pakistan",0,"North"],
+["HP","Himachal Pradesh","State","Shimla",6.86,55673,"V","China",0,"North"],
+["UK","Uttarakhand","State","Dehradun",10.09,53483,"V","China, Nepal",0,"North"],
+["AR","Arunachal Pradesh","State","Itanagar",1.38,83743,"V","China, Bhutan, Myanmar",0,"North-East"],
+["RJ","Rajasthan","State","Jaipur",68.55,342239,"IV","Pakistan",0,"West"],
+["HR","Haryana","State","Chandigarh",25.35,44212,"IV","—",0,"North"],
+["DL","Delhi","UT","New Delhi",16.79,1484,"IV","—",0,"North"],
+["UP","Uttar Pradesh","State","Lucknow",199.81,240928,"IV","Nepal",0,"North"],
+["BR","Bihar","State","Patna",104.10,94163,"IV","Nepal",0,"East"],
+["SK","Sikkim","State","Gangtok",0.61,7096,"IV","China, Nepal, Bhutan",0,"North-East"],
+["AS","Assam","State","Dispur",31.21,78438,"V","Bhutan, Bangladesh",0,"North-East"],
+["NL","Nagaland","State","Kohima",1.98,16579,"V","Myanmar",0,"North-East"],
+["GJ","Gujarat","State","Gandhinagar",60.44,196024,"V","Pakistan",1,"West"],
+["MP","Madhya Pradesh","State","Bhopal",72.63,308252,"III","—",0,"Central"],
+["CG","Chhattisgarh","State","Nava Raipur",25.55,135192,"II","—",0,"Central"],
+["JH","Jharkhand","State","Ranchi",32.99,79716,"III","—",0,"East"],
+["WB","West Bengal","State","Kolkata",91.28,88752,"IV","Bangladesh, Nepal, Bhutan",1,"East"],
+["ML","Meghalaya","State","Shillong",2.97,22429,"V","Bangladesh",0,"North-East"],
+["MN","Manipur","State","Imphal",2.86,22327,"V","Myanmar",0,"North-East"],
+["DH","Dadra & Nagar Haveli and Daman & Diu","UT","Daman",0.59,603,"III","—",1,"West"],
+["MH","Maharashtra","State","Mumbai",112.37,307713,"IV","—",1,"West"],
+["TG","Telangana","State","Hyderabad",35.00,112077,"II","—",0,"South"],
+["OD","Odisha","State","Bhubaneswar",41.97,155707,"III","—",1,"East"],
+["TR","Tripura","State","Agartala",3.67,10486,"V","Bangladesh",0,"North-East"],
+["MZ","Mizoram","State","Aizawl",1.10,21081,"V","Myanmar, Bangladesh",0,"North-East"],
+["GA","Goa","State","Panaji",1.46,3702,"III","—",1,"West"],
+["KA","Karnataka","State","Bengaluru",61.10,191791,"III","—",1,"South"],
+["AP","Andhra Pradesh","State","Amaravati",49.39,162970,"III","—",1,"South"],
+["AN","Andaman & Nicobar Islands","UT","Sri Vijaya Puram",0.38,8249,"V","Maritime: Myanmar, Thailand, Indonesia",1,"Islands"],
+["LD","Lakshadweep","UT","Kavaratti",0.064,32,"III","Maritime: Maldives",1,"Islands"],
+["KL","Kerala","State","Thiruvananthapuram",33.41,38852,"III","—",1,"South"],
+["TN","Tamil Nadu","State","Chennai",72.15,130060,"III","Maritime: Sri Lanka",1,"South"],
+["PY","Puducherry","UT","Puducherry",1.25,479,"II","—",1,"South"]
+].map(function(r){return {code:r[0],name:r[1],kind:r[2],cap:r[3],pop:r[4],area:r[5],zone:r[6],borders:r[7],coast:!!r[8],region:r[9]}});
+var BY={},NAME2={};function norm(n){return n.toLowerCase().replace(/&/g,"and").replace(/[^a-z]/g,"")}
+S.forEach(function(s){BY[s.code]=s;NAME2[norm(s.name)]=s.code});
+
+/* ---------- sample layer data ---------- */
+var AQI={DL:368,HR:312,PB:248,UP:334,BR:286,RJ:198,CH:214,UK:142,HP:78,JK:121,LA:46,MP:176,GJ:158,MH:132,GA:64,KA:92,KL:48,TN:84,PY:71,AP:96,TG:118,OD:141,WB:212,JH:189,CG:151,SK:38,AR:31,AS:106,NL:54,ML:42,MN:63,MZ:29,TR:97,AN:26,LD:22,DH:118};
+var RAIN={TN:18,PY:24,AP:-12,KL:9,KA:-6,TG:-41,AN:32,LD:-15,GA:-70,MH:-88,GJ:-100,RJ:-100,PB:-96,HR:-100,DL:-100,CH:-95,UP:-92,BR:-85,JH:-74,WB:-58,OD:-22,CG:-80,MP:-94,JK:-35,LA:-60,HP:-52,UK:-66,SK:-40,AR:-12,AS:-28,NL:-31,ML:-19,MN:-44,MZ:-10,TR:-26,DH:-100};
+var FIRE={PB:412,HR:138,UP:207,MP:263,RJ:58,BR:21,CG:34,MH:46,OD:18,JH:12,GJ:15,TG:22,AP:19,KA:9,TN:6,WB:11,AS:7,MN:5,MZ:8,NL:4,AR:3,TR:2,ML:3,UK:6,HP:4,JK:3,DL:2,CH:1,KL:1,GA:0,SK:0,LA:0,AN:0,LD:0,PY:0,DH:0};
+var QUAKE={AS:6,MN:4,AR:5,UK:3,HP:2,JK:4,LA:3,MZ:2,NL:2,ML:1,SK:2,GJ:3,MH:1,AN:7,TR:1,BR:1};
+var STCAP={JK:[74.80,34.08],LA:[77.58,34.15],CH:[76.78,30.73],PB:[75.86,30.90],HP:[77.17,31.10],UK:[78.03,30.32],AR:[93.61,27.08],RJ:[75.79,26.91],HR:[76.6,29.1],DL:[77.21,28.61],UP:[80.95,26.85],BR:[85.14,25.59],SK:[88.61,27.33],AS:[91.74,26.14],NL:[94.11,25.67],GJ:[72.57,23.02],MP:[77.41,23.26],CG:[81.63,21.25],JH:[85.31,23.34],WB:[88.36,22.57],ML:[91.89,25.58],MN:[93.94,24.81],DH:[72.83,20.40],MH:[72.88,19.08],TG:[78.49,17.39],OD:[85.82,20.30],TR:[91.28,23.83],MZ:[92.72,23.73],GA:[73.83,15.49],KA:[77.59,12.97],AP:[80.65,16.51],AN:[92.73,11.62],LD:[72.64,10.57],KL:[76.94,8.52],TN:[80.27,13.08],PY:[79.81,11.94]};
+var HEAT={},COLD={};Object.keys(STCAP).forEach(function(c){var lat=STCAP[c][1],hill=["JK","LA","HP","UK","SK","AR"].indexOf(c)>-1;HEAT[c]=Math.round((hill?14:36-0.32*(lat-8))*10)/10;COLD[c]=Math.round((hill?-2:24-0.62*(lat-8))*10)/10});
+var POWER={};var r0=rng(91);S.forEach(function(s){POWER[s.code]=Math.round((1.5+r0()*8.5)*10)/10});POWER.DL=11.2;POWER.UP=9.4;POWER.TN=3.1;POWER.KL=2.4;POWER.PB=6.8;
+
+/* places [lon,lat] */
+var P={Delhi:[77.21,28.61],Ghaziabad:[77.44,28.67],Noida:[77.39,28.54],Gurugram:[77.03,28.46],Hapur:[77.78,28.73],Patna:[85.14,25.59],Ludhiana:[75.86,30.90],Kolkata:[88.36,22.57],Jaipur:[75.79,26.91],Mumbai:[72.88,19.08],Lucknow:[80.95,26.85],Chennai:[80.27,13.08],Bengaluru:[77.59,12.97],Hyderabad:[78.49,17.39],Ahmedabad:[72.57,23.02],Pune:[73.86,18.52],Muzaffarpur:[85.39,26.12],Amritsar:[74.87,31.63],Kanpur:[80.33,26.45],Varanasi:[82.97,25.32],Bhopal:[77.41,23.26],Guwahati:[91.74,26.14],Bhubaneswar:[85.82,20.30],Srinagar:[74.80,34.08],Leh:[77.58,34.15],Thiruvananthapuram:[76.94,8.52],Visakhapatnam:[83.22,17.69],Indore:[75.86,22.72],Kochi:[76.27,9.93],Imphal:[93.94,24.81],Shimla:[77.17,31.10],Dehradun:[78.03,30.32],Raipur:[81.63,21.25],Ranchi:[85.31,23.34],Nagpur:[79.09,21.15],Kandla:[70.22,23.03],Ratnagiri:[73.30,16.99],Nellore:[79.99,14.44],Rangpo:[88.53,27.18],Jakhau:[68.72,23.22],Nadia:[88.55,23.40],Kozhikode:[75.78,11.25],Sangrur:[75.84,30.25],SriVijayaPuram:[92.73,11.62],Agartala:[91.28,23.83]};
+
+/* signals: sev, domain, state, text, source, minutes ago, place */
+var DOM={security:"Security",weather:"Weather",quake:"Seismic",air:"Air",economy:"Economy",infra:"Infrastructure",cyber:"Digital",health:"Health"};
+var SEVC={1:"#46C287",2:"#E9C24A",3:"#F0803C",4:"#E5484D"};
+var EV=[
+ [4,"air","DL","GRAP Stage III in force across NCR; construction and older petrol and diesel cars restricted","CAQM order",22,"Delhi"],
+ [3,"air","PB","Stubble-fire count crosses 400 in 24 h; Sangrur, Ferozepur, Bathinda lead","NASA FIRMS",48,"Sangrur"],
+ [3,"weather","TN","Heavy to very heavy rain likely over coastal Tamil Nadu and Puducherry for 48 h","IMD Chennai",65,"Chennai"],
+ [3,"weather","AN","Low-pressure area over south Andaman Sea; likely to become a depression in 36 h","IMD RSMC",80,"SriVijayaPuram"],
+ [2,"quake","AN","M4.3 earthquake, Andaman Sea, depth 35 km; no tsunami threat","NCS · INCOIS",95,null,[94.0,11.8]],
+ [2,"quake","AS","M3.6 earthquake near Sonitpur; felt in Tezpur","NCS",130,null,[92.8,26.7]],
+ [3,"infra","UP","Dense fog: 46 trains on Northern Railway running 2 h+ late","NTES",140,"Kanpur"],
+ [2,"infra","DL","Low-visibility CAT-IIIB operations at Delhi airport, 05:10–07:40","AAI",170,"Delhi"],
+ [2,"economy","MH","Onion modal price at Lasalgaon up 9% week on week","Agmarknet",190,null,[74.23,20.15]],
+ [1,"economy","MH","RBI reference rate fixed; rupee steady in narrow band","RBI",205,"Mumbai"],
+ [3,"cyber","KA","CERT-In advisory: critical remote code flaw in a widely deployed VPN appliance","CERT-In",220,"Bengaluru"],
+ [2,"cyber","MH","UPI success rate dipped to 98.1% for 25 min at one large issuer bank","NPCI",250,"Mumbai"],
+ [2,"infra","WB","Grid frequency touched 49.88 Hz in eastern region after a unit trip","Grid-India",280,"Kolkata"],
+ [1,"infra","SK","NH-10 reopened after landslide clearance near Rangpo","BRO",310,"Rangpo"],
+ [2,"security","WB","BSF seizes contraband at Indo-Bangladesh border, Nadia sector","BSF",340,"Nadia"],
+ [1,"security","MH","Coast Guard completes search and rescue off Ratnagiri; 11 fishers safe","ICG",360,"Ratnagiri"],
+ [1,"security","KL","Indian Navy and partner navies begin scheduled exercise in Arabian Sea","Indian Navy",390,null,[72.5,10.5]],
+ [2,"health","KL","District surveillance flags rise in fever cases; health dept issues advisory","State health dept",410,"Kozhikode"],
+ [2,"health","DL","Hospitals report more respiratory OPD visits as AQI stays Very Poor","Hospital bulletin",430,"Delhi"],
+ [1,"weather","HP","Light snowfall at higher reaches; Atal Tunnel open for daytime traffic","IMD Shimla",470,null,[77.14,32.4]],
+ [2,"weather","JK","Cold wave in Kashmir valley; Srinagar at −2.1 °C","IMD Srinagar",500,"Srinagar"],
+ [1,"economy","GJ","Kandla and Mundra cargo throughput up on month","Port authority",540,"Kandla"],
+ [2,"air","BR","Patna and Muzaffarpur AQI in Poor band for third straight day","CPCB",580,"Patna"],
+ [1,"infra","KA","Bengaluru metro extension trial run completed","BMRCL",620,"Bengaluru"],
+ [2,"quake","UK","M3.1 earthquake, Chamoli district; no damage reported","NCS",660,null,[79.5,30.4]],
+ [1,"economy","TG","Hyderabad data-centre capacity addition announced","State IT dept",700,"Hyderabad"],
+ [2,"weather","OD","Fishermen advised not to venture into south Bay of Bengal from Thursday","IMD Bhubaneswar",760,"Bhubaneswar"],
+ [1,"cyber","DL","Phishing campaign impersonating income-tax refund messages reported","CERT-In",820,"Delhi"]
+].map(function(e,i){return {id:i,sev:e[0],dom:e[1],st:e[2],t:e[3],src:e[4],ago:e[5],ll:e[7]||P[e[6]],isNew:false}});
+var EXTRA=[
+ [2,"air","HR","Gurugram AQI climbs into Very Poor band at 17:00","CPCB","Gurugram"],
+ [1,"quake","MN","M2.9 earthquake near Ukhrul","NCS",null,[94.36,25.05]],
+ [2,"infra","RJ","Solar generation dips as haze thickens over western Rajasthan","Grid-India",null,[71.9,27.0]],
+ [3,"weather","AP","Depression likely to cross south Andhra coast; red alert for Nellore","IMD","Nellore"],
+ [1,"economy","KA","Bengaluru vegetable arrivals normalise after rain","APMC","Bengaluru"],
+ [2,"cyber","TN","Brief outage at a telecom operator's data services in Chennai circle","Downdetector IN","Chennai"],
+ [2,"security","GJ","Coast Guard intercepts boat off Jakhau; crew detained for questioning","ICG","Jakhau"],
+ [1,"health","MH","Pune municipal corporation starts winter vaccination drive","PMC","Pune"]
+];
+var QUAKES=[["03:42","Andaman Sea","AN",4.3,35,[94.0,11.8]],["22:18","Sonitpur, Assam","AS",3.6,18,[92.8,26.7]],["19:05","Chamoli, Uttarakhand","UK",3.1,10,[79.5,30.4]],["14:51","Ukhrul, Manipur","MN",2.9,52,[94.36,25.05]],["11:27","Kutch, Gujarat","GJ",3.0,14,[70.3,23.6]],["08:36","Kargil, Ladakh","LA",3.4,10,[76.13,34.56]],["01:12","Doda, J&K","JK",2.8,8,[75.55,33.15]],["20:44","West Kameng, Arunachal","AR",3.2,25,[92.4,27.3]],["16:09","Nicobar Islands","AN",4.0,44,[93.6,7.6]],["13:30","Hindu Kush, Afghanistan","—",4.6,190,[70.9,36.5]],["06:58","Western Nepal","—",3.9,15,[81.6,29.3]]];
+var AQS=[["Delhi","DL",368],["Ghaziabad","UP",352],["Noida","UP",341],["Gurugram","HR",312],["Hapur","UP",306],["Kanpur","UP",294],["Patna","BR",286],["Muzaffarpur","BR",271],["Ludhiana","PB",262],["Amritsar","PB",231],["Kolkata","WB",212],["Varanasi","UP",204],["Jaipur","RJ",198],["Ahmedabad","GJ",161],["Bhopal","MP",152],["Mumbai","MH",132],["Hyderabad","TG",118],["Guwahati","AS",106],["Bengaluru","KA",92],["Chennai","TN",84],["Kochi","KL",52],["Shimla","HP",61],["Srinagar","JK",121],["Bhubaneswar","OD",141],["Raipur","CG",151],["Ranchi","JH",189],["Pune","MH",118],["Lucknow","UP",318],["Thiruvananthapuram","KL",44],["Imphal","MN",63]];
+var AIRPORTS=[["DEL","Delhi",[77.10,28.56],1412,48],["BOM","Mumbai",[72.87,19.09],988,22],["BLR","Bengaluru",[77.71,13.20],742,11],["HYD","Hyderabad",[78.43,17.24],611,9],["MAA","Chennai",[80.17,12.99],522,26],["CCU","Kolkata",[88.45,22.65],438,17],["LKO","Lucknow",[80.89,26.76],182,54],["AMD","Ahmedabad",[72.63,23.07],264,14],["GAU","Guwahati",[91.59,26.11],118,19],["COK","Kochi",[76.39,10.15],196,8]];
+var FRONT=[["Line of Control","JK",2,"Ceasefire holding; routine patrolling and infiltration watch in Kupwara–Poonch belt",[74.3,34.0]],
+ ["LAC · Western sector","LA",2,"Winter posture; disengaged friction points under periodic review",[78.9,34.3]],
+ ["LAC · Middle sector","HP",1,"Passes closing for winter; low activity",[79.6,31.3]],
+ ["LAC · Eastern sector","AR",2,"Infrastructure works ongoing on both sides; standard posture",[93.4,28.1]],
+ ["Indo-Myanmar border","MN",3,"Free Movement Regime changes and fencing work; displacement flows monitored",[94.5,24.2]],
+ ["Indo-Bangladesh border","WB",3,"Smuggling and cattle seizures up; fencing gaps in riverine stretches",[88.9,24.3]],
+ ["Indo-Nepal open border","BR",1,"Open border; festival-season traffic normal",[84.6,27.3]],
+ ["Indian Ocean Region","AN",2,"Research and survey vessels tracked near Andaman and Nicobar; normal shipping",[91.5,8.0]]];
+/* fire hotspots generated around clusters */
+var FIRES=[];(function(){var fr=rng(77);[[75.3,30.4,1.1,0.7,105],[76.3,29.5,0.8,0.6,35],[79.2,27.2,2.2,1.2,52],[77.6,23.4,2.4,1.4,66],[74.6,27.6,1.6,1.4,15],[81.8,21.3,1.3,1.3,9],[79.0,19.5,1.6,1.4,12],[85.0,25.9,1.2,0.5,6],[93.0,24.0,0.8,0.8,5]].forEach(function(c){
+  for(var i=0;i<c[4];i++){var a=fr()*Math.PI*2,r=Math.sqrt(fr());FIRES.push([c[0]+Math.cos(a)*r*c[2],c[1]+Math.sin(a)*r*c[3],fr()])}})})();
+var CYCLONE={now:[94.6,8.6],track:[[94.6,8.6],[91.8,9.9],[88.6,11.2],[85.0,12.6],[81.9,13.7],[79.9,14.4]]};
+var FOG=[[73.6,30.4],[76.5,31.0],[80.0,29.4],[84.0,27.8],[87.6,26.6],[88.4,25.6],[86.5,24.6],[82.6,25.0],[78.6,26.2],[75.6,28.1],[73.2,29.0]];
+
+/* ---------- layers ---------- */
+var CPCB=[[50,"#00B050","Good"],[100,"#92D050","Satisfactory"],[200,"#F2E205","Moderate"],[300,"#FF9900","Poor"],[400,"#FF2D2D","Very poor"],[9999,"#A80000","Severe"]];
+function hex(h){return [1,3,5].map(function(i){return parseInt(h.substr(i,2),16)})}
+function ramp(stops,t){t=Math.max(0,Math.min(1,t));var n=stops.length-1,i=Math.min(n-1,Math.floor(t*n)),f=t*n-i,a=hex(stops[i]),b=hex(stops[i+1]);return "rgb("+[0,1,2].map(function(k){return Math.round(a[k]+(b[k]-a[k])*f)}).join(",")+")"}
+function lum(c){var m=c.match(/\d+/g);return m?(0.299*m[0]+0.587*m[1]+0.114*m[2])/255:.5}
+function aqiBand(v){for(var i=0;i<CPCB.length;i++)if(v<=CPCB[i][0])return CPCB[i]}
+function grad(stops,lo,hi){return '<span>'+lo+'</span><span class="sw">'+stops.map(function(c){return '<span style="background:'+c+'">.</span>'}).join("")+'</span><span>'+hi+'</span>'}
+var R_P=["#1F7A6F","#3FA98A","#E9C24A","#F0803C","#D8333B"],R_R=["#8A4B1F","#C9925A","#D9D2B8","#5DB5A4","#1D6F8C"],R_F=["#2E4442","#7B5B2A","#E39A2A","#E5532D","#B3121E"],R_Q=["#2A3E48","#4E5C8F","#8A5FB8","#C65AAE","#F05E8A"],R_W=["#1D3F4A","#2A7F8C","#7FC6A4","#E9C24A","#F0803C"];
+var LAYERS={
+ pulse:{name:"Pulse",unit:"",fmt:function(v){return Math.round(v)},max:100,color:function(v){return ramp(R_P,v/100)},legend:function(){return grad(R_P,"0 calm","100 acute")},desc:"Composite stress index, 0–100"},
+ aqi:{name:"Air (AQI)",unit:"",fmt:function(v){return Math.round(v)},max:450,color:function(v){var b=hex(aqiBand(v)[1]);return "rgb("+b.join(",")+")"},legend:function(){return '<div class="k">'+CPCB.map(function(c){return '<span><i style="background:'+c[1]+'"></i>'+c[2]+'</span>'}).join("")+'</div>'},desc:"National AQI, CPCB bands"},
+ rain:{name:"Rain dep.",unit:"%",fmt:function(v){return (v>0?"+":"")+Math.round(v)},max:100,color:function(v){return ramp(R_R,(v+100)/150)},legend:function(){return grad(R_R,"−100% dry","+50% wet")},desc:"Weekly rainfall vs normal"},
+ fire:{name:"Fires",unit:"",fmt:function(v){return Math.round(v)},max:420,color:function(v){return ramp(R_F,Math.sqrt(v/420))},legend:function(){return grad(R_F,"0","400+")},desc:"VIIRS fire hotspots, 24 h"},
+ quake:{name:"Seismic",unit:"",fmt:function(v){return Math.round(v)},max:7,color:function(v){return ramp(R_Q,v/7)},legend:function(){return grad(R_Q,"0","7+")},desc:"Earthquakes M ≥ 2.5, 7 days"},
+ heat:{name:"Heat",unit:"°",fmt:function(v){return (+v).toFixed(0)},max:45,color:function(v){return ramp(["#2B4C7E","#3FA9C9","#9AD3A7","#F2D35B","#F0803C","#C4271E"],(v-10)/35)},legend:function(){return grad(["#2B4C7E","#3FA9C9","#9AD3A7","#F2D35B","#F0803C","#C4271E"],"10 °C","45 °C")},desc:"Today's maximum temperature"},
+ cold:{name:"Cold",unit:"°",fmt:function(v){return (+v).toFixed(0)},max:30,color:function(v){return ramp(["#5B2A86","#3D5FB5","#4FA3C7","#BFE3E0","#E4E9E2"],(v+10)/35)},legend:function(){return grad(["#5B2A86","#3D5FB5","#4FA3C7","#BFE3E0","#E4E9E2"],"−10 °C","25 °C")},desc:"Today's minimum temperature"},
+ power:{name:"Power",unit:"%",fmt:function(v){return "+"+(+v).toFixed(1)},max:12,color:function(v){return ramp(R_W,v/12)},legend:function(){return grad(R_W,"+0%","+12%")},desc:"Peak power demand vs last year"}
+};
+var PULSE={};
+function computePulse(){S.forEach(function(s){var c=s.code,sig=EV.filter(function(e){return e.st===c}).reduce(function(a,e){return a+e.sev},0);
+  PULSE[c]=Math.round(100*(0.34*Math.min(1,(AQI[c]||0)/400)+0.18*Math.min(1,Math.sqrt((FIRE[c]||0)/420))+0.14*Math.min(1,(QUAKE[c]||0)/7)+0.12*Math.min(1,(POWER[c]||0)/12)+0.22*Math.min(1,sig/8)))})}
+function val(layer,code){var m={aqi:AQI,rain:RAIN,fire:FIRE,quake:QUAKE,power:POWER,pulse:PULSE,heat:HEAT,cold:COLD}[layer];return (m&&m[code])||0}
+function asc(layer){return layer==="cold"||(layer==="rain"&&!LIVE.rain)}
+function rankOf(layer,code){var v=val(layer,code);if(!v&&(layer==="fire"||layer==="quake"||layer==="rain"&&LIVE.rain))return "—";var arr=S.map(function(s){return val(layer,s.code)}).sort(function(a,b){return asc(layer)?a-b:b-a});return arr.indexOf(v)+1}
+var LIVE={},FEED={};
+var RAIN_LIVE={name:"Rain 7 d",unit:" mm",fmt:function(v){return Math.round(v)},max:150,color:function(v){return ramp(["#E2DDC8","#9CCFC0","#4FA9B5","#2A78A8","#1F3F8C"],Math.sqrt(Math.max(0,v)/150))},legend:function(){return grad(["#E2DDC8","#9CCFC0","#4FA9B5","#2A78A8","#1F3F8C"],"0","150+ mm")},desc:"Rainfall, last 7 days"};
+function level(v){return v>=70?["Acute","var(--crit)"]:v>=50?["High","var(--high)"]:v>=30?["Watch","var(--warn)"]:["Calm","var(--good)"]}
+/* district values derived from state value with seeded variation */
+var DV={};
+function dval(layer,d){var key=d.properties.dt_code+"|"+layer;if(DV[key]!=null)return DV[key];
+  var sc=d.properties.code,base=val(layer,sc),r=rng(+d.properties.dt_code*31+layer.length*7)(),v;
+  if(layer==="rain"&&!LIVE.rain)v=Math.max(-100,Math.min(60,base+(r-.5)*40));
+  else if(layer==="heat"||layer==="cold")v=base+(r-.5)*3.2;
+  else if(layer==="quake")v=base?Math.round(base*r*1.4):0;
+  else if(layer==="fire")v=base*(0.2+r*1.6)/Math.max(1,(d.properties.n||1))*3;
+  else v=base*(0.72+r*0.56);
+  DV[key]=v;return v}
+
+/* ---------- state of the UI ---------- */
+var curLayer=store("drishti-layer")||"pulse"; if(!LAYERS[curLayer])curLayer="pulse";
+var gran="state", sel={st:store("drishti-state")||"DL",dt:null}; if(!BY[sel.st])sel.st="DL";
+var OVL={signals:{name:"Signals",on:true,sym:'<svg width="12" height="12"><circle cx="6" cy="6" r="4" fill="#F0803C" stroke="#fff" stroke-width="1"/></svg>'},
+ quakes:{name:"Earthquakes",on:true,sym:'<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="none" stroke="#C65AAE" stroke-width="1.5"/><circle cx="6" cy="6" r="2" fill="#C65AAE"/></svg>'},
+ fires:{name:"Fire hotspots",on:true,sym:'<svg width="12" height="12"><circle cx="6" cy="6" r="2.5" fill="#FF7A1A"/></svg>'},
+ air:{name:"AQI stations",on:false,sym:'<svg width="12" height="12"><rect x="2" y="2" width="8" height="8" rx="2" fill="#FF9900"/></svg>'},
+ airports:{name:"Airports",on:false,sym:'<svg width="12" height="12"><path d="M6 1 L11 6 L6 11 L1 6Z" fill="#2FB6A8"/></svg>'},
+ frontiers:{name:"Frontier sectors",on:true,sym:'<svg width="12" height="12"><path d="M6 1 L11 11 L1 11Z" fill="none" stroke="#E9C24A" stroke-width="1.5"/></svg>'},
+ weather:{name:"Weather systems",on:true,sym:'<svg width="12" height="12"><path d="M1 6 h10" stroke="#F0803C" stroke-width="2" stroke-dasharray="3 2"/></svg>'},
+ alerts:{name:"Official alerts",on:true,sym:'<svg width="12" height="12"><rect x="1.5" y="1.5" width="9" height="9" rx="1" fill="rgba(240,128,60,.35)" stroke="#F0803C" stroke-width="1.3"/></svg>'},
+ world:{name:"World → India",on:true,sym:'<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="rgba(47,182,168,.5)" stroke="#2FB6A8"/></svg>'},
+ places:{name:"My places",on:true,sym:'<svg width="12" height="12"><path d="M6 1 L7.5 4.6 L11 4.8 L8.3 7.1 L9.2 10.8 L6 8.8 L2.8 10.8 L3.7 7.1 L1 4.8 L4.5 4.6Z" fill="#F2A33A"/></svg>'},
+ cities:{name:"City labels",on:true,sym:'<svg width="12" height="12"><circle cx="6" cy="6" r="2" fill="currentColor"/></svg>'}};
+var ovSaved=store("drishti-ovl");if(ovSaved)Object.keys(ovSaved).forEach(function(k){if(OVL[k])OVL[k].on=!!ovSaved[k]});
+
+/* ---------- map ---------- */
+var svg=d3.select("#map"),W=800,H=600,proj,path,zoom,T=d3.zoomIdentity,mapReady=false;
+var gAl,gGeo,gNb,gDist,gState,gEdge,gWx,gPts,gLbl,statesF,distF,borderMesh,nbF,STATEF={};
+var defs=svg.append("defs");
+defs.append("filter").attr("id","blur").attr("x","-20%").attr("y","-40%").attr("width","140%").attr("height","180%").append("feGaussianBlur").attr("stdDeviation",14);
+var glow=defs.append("filter").attr("id","glow");glow.append("feGaussianBlur").attr("stdDeviation",3).attr("result","b");var fm=glow.append("feMerge");fm.append("feMergeNode").attr("in","b");fm.append("feMergeNode").attr("in","SourceGraphic");
+
+Promise.all([d3.json("india.json"),d3.json("nb.json")]).then(function(res){
+  var topo=res[0],nb=res[1];
+  statesF=topojson.feature(topo,topo.objects.states).features;
+  distF=topojson.feature(topo,topo.objects.districts).features;
+  borderMesh=topojson.mesh(topo,topo.objects.states,function(a,b){return a===b});
+  nbF=topojson.feature(nb,nb.objects.nb).features;
+  statesF.forEach(function(f){f.properties.code=NAME2[norm(f.properties.st_nm)];STATEF[f.properties.code]=f});
+  var cnt={};distF.forEach(function(d){d.properties.code=NAME2[norm(d.properties.st_nm)];cnt[d.properties.code]=(cnt[d.properties.code]||0)+1});
+  distF.forEach(function(d){d.properties.n=cnt[d.properties.code]});
+  build();$("#loading").hidden=true;mapReady=true;
+}).catch(function(e){$("#loading").textContent="The map data could not load. Reload the page to try again.";console.error(e)});
+
+function size(){var b=$("#mapbox").getBoundingClientRect();W=Math.max(320,b.width);H=Math.max(320,b.height);svg.attr("viewBox","0 0 "+W+" "+H)}
+function fitPad(){var wide=W>900;return {l:wide?260:14,r:wide?410:14,t:wide?96:70,b:52}}
+function build(){
+  size();
+  var pad=fitPad(),india={type:"FeatureCollection",features:statesF};
+  proj=d3.geoMercator().fitExtent([[pad.l,pad.t],[W-pad.r,H-pad.b]],india);
+  path=d3.geoPath(proj);
+  svg.selectAll("g.root").remove();
+  var rootG=svg.append("g").attr("class","root");
+  gGeo=rootG.append("g");
+  gGeo.append("path").datum(d3.geoGraticule().step([5,5])()).attr("class","grat").attr("d",path);
+  gNb=gGeo.append("g");
+  gNb.selectAll("path").data(nbF).join("path").attr("class","nb").attr("d",path);
+  gGeo.append("g").selectAll("text").data(nbF.filter(function(f){return ["Pakistan","China","Nepal","Bangladesh","Myanmar","Sri Lanka","Bhutan"].indexOf(f.properties.name)>-1})).join("text").attr("class","nbl")
+    .attr("transform",function(f){var o={Pakistan:[68.5,28.5],China:[86,33.5],Nepal:[83.6,28.6],Bangladesh:[90.1,23.9],Myanmar:[96.2,21.5],"Sri Lanka":[80.7,7.6],Bhutan:[90.4,27.45]}[f.properties.name];var p=proj(o);return "translate("+p+")"}).attr("text-anchor","middle").text(function(f){return f.properties.name});
+  [["Arabian Sea",[65.5,15]],["Bay of Bengal",[89.5,16.5]],["Indian Ocean",[80,3]],["Andaman Sea",[96.5,12.5]]].forEach(function(s){var p=proj(s[1]);gGeo.append("text").attr("class","nbl").attr("x",p[0]).attr("y",p[1]).attr("text-anchor","middle").text(s[0])});
+  gState=gGeo.append("g");
+  gState.selectAll("path").data(statesF).join("path").attr("class","st").attr("d",path)
+    .on("click",function(ev,f){ev.stopPropagation();selectState(f.properties.code,true)})
+    .on("mousemove",function(ev,f){showTip(ev,stateTip(f.properties.code))}).on("mouseleave",hideTip);
+  gDist=gGeo.append("g").style("display","none");
+  gDist.selectAll("path").data(distF).join("path").attr("class","dt").attr("d",path)
+    .on("click",function(ev,d){ev.stopPropagation();selectDistrict(d)})
+    .on("mousemove",function(ev,d){showTip(ev,distTip(d))}).on("mouseleave",hideTip);
+  gGeo.append("path").datum(borderMesh).attr("class","edge").attr("d",path).attr("filter","url(#glow)");
+  gAl=gGeo.append("g");
+  gWx=gGeo.append("g");
+  gWx.append("path").attr("class","fog").attr("d",ring(FOG));
+  gWx.append("path").attr("class","cone").attr("d",ring(coneShape(CYCLONE.track)));
+  gWx.append("path").datum({type:"LineString",coordinates:CYCLONE.track}).attr("class","track").attr("d",path);
+  gPts=rootG.append("g");gLbl=rootG.append("g");
+  zoom=d3.zoom().scaleExtent([1,14]).translateExtent([[-W,-H],[2*W,2*H]]).on("zoom",function(ev){T=ev.transform;gGeo.attr("transform",T);place();updateDetail()});
+  svg.call(zoom).on("dblclick.zoom",null);
+  svg.on("click",function(){if(sel.dt){sel.dt=null;paint();renderDossier()}});
+  svg.on("mousemove.coord",function(ev){var p=d3.pointer(ev),ll=proj.invert(T.invert(p));if(ll)$("#coord").textContent=ll[1].toFixed(2)+"° N  "+ll[0].toFixed(2)+"° E"});
+  wxVis();drawAlerts();shadeNb();
+  buildPoints();paint();place();updateDetail();
+  if(sel.st)selectState(sel.st,false,true);
+}
+function ring(pts){return "M"+pts.map(function(p){return proj(p).map(function(v){return v.toFixed(1)}).join(",")}).join("L")+"Z"}
+function coneShape(tr){var L=[],R=[];for(var i=0;i<tr.length;i++){var a=tr[Math.max(0,i-1)],b=tr[Math.min(tr.length-1,i+1)],dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1,w=0.25+i*0.42;
+  L.push([tr[i][0]-dy/len*w,tr[i][1]+dx/len*w]);R.push([tr[i][0]+dy/len*w,tr[i][1]-dx/len*w])}return L.concat(R.reverse())}
+
+function pts(){var out=[];
+  if(OVL.fires.on)FIRES.forEach(function(f){out.push({k:"fire",ll:[f[0],f[1]],w:f[2],frp:f[3],t:f[4]})});
+  if(OVL.air.on)AQS.forEach(function(a){var ll=a[3]||P[a[0]];if(ll)out.push({k:"air",ll:ll,v:a[2],name:a[0],st:a[1]})});
+  if(OVL.airports.on)AIRPORTS.forEach(function(a){out.push({k:"apt",ll:a[2],code:a[0],name:a[1],mv:a[3],dl:a[4]})});
+  if(OVL.frontiers.on)FRONT.forEach(function(f){out.push({k:"front",ll:f[4],name:f[0],lv:f[2],txt:f[3],st:f[1]})});
+  if(OVL.quakes.on)QUAKES.forEach(function(q){out.push({k:"quake",ll:q[5],mag:q[3],name:q[1],time:q[0],depth:q[4],st:q[2]})});
+  if(OVL.weather.on){if(LIVE.cyclones)(FEED.cyclones.list||[]).forEach(function(c){out.push({k:"cyc",ll:c.ll,name:c.name,level:c.level,live:1})});else if(!LIVE.weather)out.push({k:"cyc",ll:CYCLONE.now});
+    RAINCELLS.forEach(function(c){out.push({k:"rain",ll:c.ll,name:c.n,today:c.today,wk:c.wk,tmr:c.tmr})})}
+  if(OVL.places.on)PLACES.forEach(function(pl,i){out.push({k:"place",ll:pl.ll,name:pl.name,i:i})});
+  if(OVL.signals.on)EV.forEach(function(e,i){if(e.ll)out.push({k:"sig",ll:jit(e.ll,i),e:e})});
+  out.forEach(function(d){var p=proj(d.ll);d.x=p[0];d.y=p[1]});return out}
+function jit(ll,i){var r=rng(i*13+5);return [ll[0]+(r()-.5)*.35,ll[1]+(r()-.5)*.35]}
+function buildPoints(){
+  var data=pts();
+  var sel_=gPts.selectAll("g.pt").data(data).join("g").attr("class",function(d){return "pt k-"+d.k});
+  sel_.each(function(d){var g=d3.select(this);g.selectAll("*").remove();
+    if(d.k==="rain"){var rr=4+Math.min(14,Math.sqrt(d.today)*2.2);g.append("circle").attr("r",rr).attr("fill","rgba(47,120,200,.28)").attr("stroke","#4C8FD6").attr("stroke-width",1.2)}
+    else if(d.k==="place"){g.append("path").attr("d","M0 -9 L2.6 -2.8 L9 -2.6 L4 1.6 L5.6 8.4 L0 4.6 L-5.6 8.4 L-4 1.6 L-9 -2.6 L-2.6 -2.8Z").attr("fill","#F2A33A").attr("stroke","#06141A").attr("stroke-width",1.2);g.append("text").attr("x",11).attr("y",4).attr("class","cityl").text(d.name)}
+    else if(d.k==="fire"){g.append("circle").attr("r",1.6+d.w*1.6).attr("fill","#FF7A1A").attr("opacity",.55+d.w*.4)}
+    else if(d.k==="air"){var b=aqiBand(d.v);g.append("rect").attr("x",-7).attr("y",-7).attr("width",14).attr("height",14).attr("rx",3).attr("fill",b[1]).attr("stroke","rgba(0,0,0,.45)");
+      g.append("text").attr("y",3).attr("text-anchor","middle").attr("font-size",7.5).attr("font-family","IBM Plex Mono, monospace").attr("font-weight",600).attr("fill",lum("rgb("+hex(b[1]).join(",")+")")>.55?"#111":"#fff").text(d.v)}
+    else if(d.k==="apt"){g.append("path").attr("d","M0 -7 L7 0 L0 7 L-7 0Z").attr("fill","#2FB6A8").attr("stroke","#06141A");g.append("text").attr("x",10).attr("y",4).attr("class","cityl").text(d.code+" · "+d.dl+"m")}
+    else if(d.k==="front"){var c=SEVC[Math.min(4,d.lv+1)];g.append("path").attr("d","M0 -9 L8 6 L-8 6Z").attr("fill","rgba(233,194,74,.15)").attr("stroke",c).attr("stroke-width",1.6);
+      g.append("text").attr("y",4).attr("text-anchor","middle").attr("font-size",8).attr("font-weight",700).attr("fill",c).text(d.lv)}
+    else if(d.k==="quake"){var r=3+(d.mag-2.5)*4;g.append("circle").attr("class","halo").attr("r",r*1.6).attr("fill","none").attr("stroke","#C65AAE").attr("stroke-width",1.2);
+      g.append("circle").attr("r",r).attr("fill","rgba(198,90,174,.25)").attr("stroke","#C65AAE").attr("stroke-width",1.4);g.append("circle").attr("r",1.8).attr("fill","#F05E8A")}
+    else if(d.k==="cyc"){g.append("circle").attr("class","halo").attr("r",16).attr("fill","none").attr("stroke","#F0803C").attr("stroke-width",1.5);
+      g.append("path").attr("d","M0 -9 A9 9 0 0 1 9 0 M0 9 A9 9 0 0 1 -9 0").attr("fill","none").attr("stroke","#F0803C").attr("stroke-width",2.5);
+      g.append("circle").attr("r",3).attr("fill","#F0803C");g.append("text").attr("x",14).attr("y",4).attr("class","cityl").text(d.live?(d.name||"Cyclone")+" · "+(d.level||""):"LPA → depression · 36 h (sample)")}
+    else if(d.k==="sig"){var col=SEVC[d.e.sev],rr=3+d.e.sev*1.1;if(d.e.sev>=3||d.e.isNew)g.append("circle").attr("class","halo").attr("r",rr*1.4).attr("fill",col).attr("opacity",.6);
+      g.append("circle").attr("r",rr).attr("fill",col).attr("stroke","#06141A").attr("stroke-width",1.3)}
+  });
+  sel_.on("mousemove",function(ev,d){showTip(ev,ptTip(d))}).on("mouseleave",hideTip)
+    .on("click",function(ev,d){ev.stopPropagation();if(d.k==="place"){tab("places");return}if(d.e){selectState(d.e.st,true);tab("signals");filterToState(d.e.st)}else if(d.st&&BY[d.st])selectState(d.st,true)});
+  gPts.selectAll("g.k-rain").lower();gPts.selectAll("g.k-fire").lower();
+  renderLabels();place();
+}
+function renderLabels(){
+  var L=[];statesF.forEach(function(f){var c=path.centroid(f);var a=path.area(f);if(!isFinite(c[0]))return;
+    var adj={GA:[-14,0],DH:[-16,0],CH:[-14,-4],DL:[10,-2],PY:[14,0],LD:[0,-14]}[f.properties.code];L.push({k:"st",code:f.properties.code,x:c[0]+(adj?adj[0]:0),y:c[1]+(adj?adj[1]:0),a:a})});
+  if(OVL.cities.on)["Delhi","Mumbai","Kolkata","Chennai","Bengaluru","Hyderabad","Ahmedabad","Pune","Lucknow","Patna","Jaipur","Bhopal","Guwahati","Srinagar","Leh","Thiruvananthapuram","Bhubaneswar","Kochi","Visakhapatnam","Nagpur","Raipur","Ranchi","Imphal","Dehradun","Shimla","Indore","Varanasi","Amritsar","Kanpur","Kozhikode","Agartala"].forEach(function(n,i){var p=proj(P[n]);L.push({k:"city",name:n,x:p[0],y:p[1],tier:i<8?1:2})});
+  var s=gLbl.selectAll("g.lb").data(L).join("g").attr("class","lb");
+  s.each(function(d){var g=d3.select(this);g.selectAll("*").remove();
+    if(d.k==="st")g.append("text").attr("class","stl").attr("text-anchor","middle").attr("dy",4).text(d.code);
+    else{g.append("circle").attr("r",2.2).attr("fill","var(--fg)").attr("stroke","var(--ocean)");g.append("text").attr("class","cityl").attr("x",5).attr("y",-4).text(d.name)}});
+  paintLabels();
+}
+function paintLabels(){gLbl.selectAll("g.lb").select("text.stl").each(function(d){var f=STATEF[d.code],v=gran==="state"?val(curLayer,d.code):null,bg=v!=null?LAYERS[curLayer].color(v):"#888";
+  d3.select(this).attr("fill",lum(bg)<.55?"#F4F7F5":"#13201F").attr("stroke",lum(bg)<.55?"rgba(0,0,0,.35)":"rgba(255,255,255,.35)")})}
+function place(){
+  var k=T.k;
+  gPts.selectAll("g.pt").attr("transform",function(d){return "translate("+T.applyX(d.x)+","+T.applyY(d.y)+")"});
+  gLbl.selectAll("g.lb").attr("transform",function(d){return "translate("+T.applyX(d.x)+","+T.applyY(d.y)+")"})
+    .style("display",function(d){if(d.k==="st"){if(gran==="district"&&k>2.4)return "none";return d.a*k*k>(["DL","CH","PY","GA","DH","LD","SK","TR"].indexOf(d.code)>-1?30:900)?null:"none"}
+      return (d.tier===1&&k>=1.6)||k>=2.6?null:"none"});
+}
+function updateDetail(){var showD=gran==="district"||T.k>3.2;gDist.style("display",showD?null:"none");gState.selectAll("path").style("fill-opacity",gran==="district"&&showD?0:1)}
+var tripped={};
+function paint(){
+  var L=LAYERS[curLayer];
+  gState.selectAll("path").attr("fill",function(f){return L.color(val(curLayer,f.properties.code))})
+    .classed("sel",function(f){return f.properties.code===sel.st&&!sel.dt})
+    .attr("filter",function(f){return tripped[f.properties.code]?"url(#glow)":null});
+  gDist.selectAll("path").attr("fill",function(d){return gran==="district"?L.color(dval(curLayer,d)):"transparent"})
+    .classed("sel",function(d){return sel.dt&&d.properties.dt_code===sel.dt.properties.dt_code});
+  $("#legend").innerHTML='<span class="lbl">'+L.desc+(gran==="district"?" · by district (modelled)":"")+'</span><div class="legend">'+L.legend()+'</div>'+srcLine(curLayer);
+  paintLabels();updateDetail();
+}
+function zoomTo(f,dur){var b=path.bounds(f),pad=fitPad(),bw=b[1][0]-b[0][0],bh=b[1][1]-b[0][1],aw=W-pad.l-pad.r,ah=H-pad.t-pad.b;
+  var k=Math.min(10,0.85/Math.max(bw/aw,bh/ah)),cx=(b[0][0]+b[1][0])/2,cy=(b[0][1]+b[1][1])/2,tx=pad.l+aw/2-k*cx,ty=pad.t+ah/2-k*cy;
+  svg.transition().duration(dur==null?750:dur).call(zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(k))}
+function selectState(code,fly,nofocus){if(!BY[code])return;if(!nofocus&&focus!==code){focus=code;setTimeout(function(){setFocus(code)},0)}sel.st=code;sel.dt=null;store("drishti-state",code);try{history.replaceState(null,"","#s-"+code.toLowerCase())}catch(e){}paint();renderDossier();tab("dossier");
+  if(fly&&STATEF[code]){var f=STATEF[code];zoomTo(f)}}
+function selectDistrict(d){if(focus!==d.properties.code){focus=d.properties.code;setTimeout(function(){setFocus(d.properties.code)},0)}sel.st=d.properties.code;sel.dt=d;paint();renderDossier();tab("dossier")}
+$("#zin").addEventListener("click",function(){svg.transition().duration(300).call(zoom.scaleBy,1.6)});
+$("#zout").addEventListener("click",function(){svg.transition().duration(300).call(zoom.scaleBy,1/1.6)});
+$("#zreset").addEventListener("click",function(){sel.dt=null;if(focus)setFocus(null);try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}svg.transition().duration(600).call(zoom.transform,d3.zoomIdentity);paint();renderDossier()});
+var rz;window.addEventListener("resize",function(){clearTimeout(rz);rz=setTimeout(function(){if(mapReady){T=d3.zoomIdentity;build()}},200)});
+
+/* tooltips */
+function showTip(ev,html){var t=$("#tip"),b=$("#mapbox").getBoundingClientRect();t.innerHTML=html;t.hidden=false;
+  var x=ev.clientX-b.left+14,y=ev.clientY-b.top+14;if(x+270>b.width)x-=290;if(y+110>b.height)y-=120;t.style.left=x+"px";t.style.top=y+"px"}
+function hideTip(){$("#tip").hidden=true}
+function stateTip(c){var s=BY[c],L=LAYERS[curLayer];return '<b>'+esc(s.name)+'</b>'+L.name+': <span class="num">'+L.fmt(val(curLayer,c))+L.unit+'</span> · Pulse <span class="num">'+PULSE[c]+'</span><br><span style="color:var(--muted)">Click to open dossier</span>'}
+function distTip(d){var L=LAYERS[curLayer];return '<b>'+esc(d.properties.district)+'</b><span style="color:var(--muted)">'+esc(BY[d.properties.code]?BY[d.properties.code].name:d.properties.st_nm)+'</span><br>'+L.name+': <span class="num">'+L.fmt(dval(curLayer,d))+L.unit+'</span>'}
+function ptTip(d){
+  if(d.k==="sig")return '<b>'+esc(d.e.t)+'</b><span style="color:var(--muted)">'+DOM[d.e.dom]+' · '+esc(d.e.src)+' · '+ago(d.e.ago)+'</span>';
+  if(d.k==="quake")return '<b>M'+(+d.mag).toFixed(1)+' · '+esc(d.name)+'</b>Depth '+d.depth+' km · '+esc(d.time)+' IST';
+  if(d.k==="air"){var b=aqiBand(d.v);return '<b>'+esc(d.name)+' · AQI '+d.v+'</b>'+b[2]}
+  if(d.k==="apt")return '<b>'+d.code+' · '+esc(d.name)+'</b>'+inr.format(d.mv)+' movements today · avg delay '+d.dl+' min';
+  if(d.k==="front")return '<b>'+esc(d.name)+' · level '+d.lv+'/5</b>'+esc(d.txt);
+  if(d.k==="cyc")return d.live?'<b>'+esc(d.name||"Tropical cyclone")+'</b>GDACS alert level: '+esc(d.level||"—"):'<b>Sample system</b>Illustrative low-pressure area and track';
+  if(d.k==="rain")return '<b>'+esc(d.name)+' · '+d.today.toFixed(0)+' mm today</b>'+d.wk.toFixed(0)+' mm over 7 days · '+d.tmr.toFixed(0)+' mm forecast tomorrow';
+  if(d.k==="place")return '<b>'+esc(d.name)+'</b>One of your places · open My places';
+  if(d.k==="fire")return '<b>VIIRS fire hotspot</b>Confidence '+(d.w>.75?"high":d.w>.4?"nominal":"low")+(d.frp!=null?' · '+d.frp+' MW radiative power':'')+(d.t?'<br><span style="color:var(--muted)">'+d.t.replace("T"," ")+' IST</span>':'');return ""}
+
+/* ---------- layer console ---------- */
+function renderConsole(){
+  $("#choro").innerHTML=Object.keys(LAYERS).map(function(k){return '<button type="button" class="chorobtn" data-l="'+k+'" aria-pressed="'+(k===curLayer)+'" title="'+LAYERS[k].desc+(LIVE[k]?" · live":" · sample")+'">'+LAYERS[k].name+(LIVE[k]?'<span class="livedot" aria-label="live"></span>':'')+'</button>'}).join("");
+  $("#ovl").innerHTML=Object.keys(OVL).map(function(k){var o=OVL[k],n={signals:EV.length,quakes:QUAKES.length,fires:FIRES.length,air:AQS.length,airports:AIRPORTS.length,frontiers:FRONT.length,weather:(LIVE.weather?RAINCELLS.length+(LIVE.cyclones?FEED.cyclones.list.length:0):3),alerts:(FEED.alerts&&FEED.alerts.list?FEED.alerts.list.length:0),world:(FEED.world&&FEED.world.items?FEED.world.items.length:0),places:PLACES.length,cities:31}[k];
+    return '<label for="ov-'+k+'"><input type="checkbox" id="ov-'+k+'" data-o="'+k+'"'+(o.on?" checked":"")+'><span class="sym">'+o.sym+'</span>'+o.name+'<span class="ct">'+n+'</span></label>'}).join("");
+}
+$("#choro").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;curLayer=b.dataset.l;store("drishti-layer",curLayer);renderConsole();if(mapReady)paint();renderDossier()});
+$("#gran").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;gran=b.dataset.g;
+  document.querySelectorAll("#gran button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});if(mapReady){paint();place()}renderDossier()});
+$("#ovl").addEventListener("change",function(e){var k=e.target.dataset.o;if(!k)return;OVL[k].on=e.target.checked;var o={};Object.keys(OVL).forEach(function(x){o[x]=OVL[x].on});store("drishti-ovl",o);
+  if(mapReady){wxVis();drawAlerts();shadeNb();buildPoints()}});
+$("#layersToggle").addEventListener("click",function(){var p=$("#ovLayers"),c=p.classList.toggle("closed");this.textContent=c?"Show":"Hide";this.setAttribute("aria-expanded",!c)});
+if(matchMedia("(max-width:900px)").matches){$("#ovLayers").classList.add("closed");$("#layersToggle").textContent="Show";$("#layersToggle").setAttribute("aria-expanded","false")}
+
+/* ---------- top chips ---------- */
+function domScore(d){var w=EV.filter(function(e){return e.dom===d&&(!focus||e.st===focus)}).reduce(function(a,e){return a+(e.sev-1)*(e.sev-1)},0);return Math.round(100*(1-Math.exp(-w/(focus?8:30))))}
+function renderTop(){
+  var tot=0,w=0;S.forEach(function(s){tot+=PULSE[s.code]*s.pop;w+=s.pop});var n=Math.round(tot/w),lv=level(n),a=n/100*Math.PI*2,x=26+20*Math.sin(a),y=26-20*Math.cos(a);
+  var h='<div class="ov pulsebox"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="20" fill="none" stroke="var(--surface-2)" stroke-width="6"/><path d="M26 6 A20 20 0 '+(a>Math.PI?1:0)+' 1 '+x.toFixed(1)+' '+y.toFixed(1)+'" fill="none" stroke="'+lv[1]+'" stroke-width="6" stroke-linecap="round"/></svg>'
+    +'<div><span class="lbl">National pulse</span><div class="row" style="gap:8px;justify-content:flex-start"><span class="big num">'+n+'</span><span style="font-weight:700;color:'+lv[1]+'">'+lv[0]+'</span></div></div></div>';
+  [["air","Air"],["weather","Weather"],["quake","Seismic"],["infra","Infra"],["cyber","Digital"],["security","Security"]].forEach(function(g){var v=domScore(g[0]),l=level(v);
+    h+='<button type="button" class="ov gchip" data-d="'+g[0]+'"><span class="lbl">'+g[1]+'</span><span class="v">'+v+' <span style="font-size:11px;color:'+l[1]+';font-family:var(--f-body);font-weight:600">'+l[0]+'</span></span><span class="bar"><i style="width:'+v+'%;background:'+l[1]+'"></i></span></button>'});
+  if(focus)h+='<button type="button" class="ov gchip" data-clear="1" title="Back to all India"><span class="lbl">Drill-down</span><span class="v" style="font-size:14px;font-family:var(--f-body);font-weight:600">'+esc(BY[focus].name)+' ✕</span></button>';
+  $("#ovTop").innerHTML=h;
+}
+$("#ovTop").addEventListener("click",function(e){var b=e.target.closest(".gchip");if(!b)return;if(b.dataset.clear){$("#zreset").click();return}activeDoms=[b.dataset.d];stFilter=null;renderFilters();renderStream();tab("signals")});
+
+/* ---------- drawer ---------- */
+function tab(t){document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.t===t)});["dossier","signals","brief","places","compare"].forEach(function(x){$("#pane-"+x).hidden=x!==t});if(t==="places")renderPlaces();if(t==="compare")renderCompare()}
+document.querySelector(".tabs").addEventListener("click",function(e){var b=e.target.closest("button");if(b)tab(b.dataset.t)});
+function barW(k,v){var L=LAYERS[k];if(k==="rain"&&!LIVE.rain)return Math.min(100,Math.abs(v));if(k==="heat")return Math.max(0,Math.min(100,(v-10)/35*100));if(k==="cold")return Math.max(0,Math.min(100,(25-v)/35*100));return Math.max(0,Math.min(100,v/L.max*100))}
+function popFmt(m){return m>=10?(m/10).toFixed(2)+" cr":inr.format(Math.round(m*1000)/100)+" lakh"}
+function renderDossier(){
+  var s=BY[sel.st],p=PULSE[s.code],lv=level(p),L=LAYERS[curLayer],h="";
+  if(sel.dt){var d=sel.dt,dn=d.properties.district,sibs=distF?distF.filter(function(x){return x.properties.code===s.code}):[];
+    var sorted=sibs.slice().sort(function(a,b){return dval(curLayer,b)-dval(curLayer,a)}),rk=sorted.indexOf(d)+1;
+    h+='<button type="button" class="crumb" data-back="1">← '+esc(s.name)+'</button><div class="dos-h" style="margin-top:6px"><div><span class="lbl">District · '+esc(s.name)+'</span><div class="dos-name">'+esc(dn)+'</div></div><div class="dos-code" style="font-size:28px">'+s.code+'</div></div>';
+    h+='<div class="facts"><div class="fact"><span class="lbl">'+L.name+'</span><b>'+L.fmt(dval(curLayer,d))+L.unit+'</b></div><div class="fact"><span class="lbl">Rank in state</span><b>#'+rk+' / '+sibs.length+'</b></div><div class="fact"><span class="lbl">Census code</span><b>'+esc(d.properties.dt_code)+'</b></div></div>';
+    h+='<div class="metrics">'+Object.keys(LAYERS).filter(function(k){return k!=="pulse"}).map(function(k){var LL=LAYERS[k],v=dval(k,d),w=barW(k,v);
+      return '<div class="metric"><span>'+LL.name+' <span class="num" style="color:var(--muted)">'+LL.fmt(v)+LL.unit+'</span></span><div class="track"><i style="width:'+w+'%;background:'+LL.color(v)+'"></i></div><span class="rk">st '+LL.fmt(val(k,s.code))+'</span></div>'}).join("")+'</div>';
+    h+='<div style="margin-top:10px"><button type="button" class="linkbtn" data-pin="dt">☆ Pin '+esc(dn)+' to My places</button></div>';
+    h+='<p class="note" style="margin-top:12px">District values are modelled from the state reading for this demo. Live, they would come from station-level CPCB, FIRMS pixel counts and IMD district rainfall.</p>';
+    $("#pane-dossier").innerHTML=h;return}
+  var dens=Math.round(s.pop*1e6/s.area),evs=EV.filter(function(e){return e.st===s.code});
+  h+='<div class="dos-h"><div><span class="lbl">'+s.kind+' · '+s.region+'</span><div class="dos-name">'+esc(s.name)+'</div><div style="color:var(--muted);font-size:12px">Capital: '+esc(s.cap)+'</div></div><div class="dos-code">'+s.code+'</div></div>';
+  h+='<div class="facts"><div class="fact"><span class="lbl">Pulse</span><b style="color:'+lv[1]+'">'+p+' · '+lv[0]+'</b></div><div class="fact"><span class="lbl">Population ’11</span><b>'+popFmt(s.pop)+'</b></div><div class="fact"><span class="lbl">Area</span><b>'+inr.format(s.area)+' km²</b></div>'
+    +'<div class="fact"><span class="lbl">Density</span><b>'+inr.format(dens)+'/km²</b></div><div class="fact"><span class="lbl">Seismic zone</span><b>'+s.zone+'</b></div><div class="fact"><span class="lbl">AQI band</span><b>'+aqiBand(AQI[s.code])[2]+'</b></div></div>';
+  h+='<div class="metrics">'+["pulse","aqi","fire","quake","heat","cold","rain","power"].map(function(k){var LL=LAYERS[k],v=val(k,s.code),w=barW(k,v);
+    return '<div class="metric"><span>'+LL.name+(LIVE[k]?'<span class="livedot"></span>':'')+' <span class="num" style="color:var(--muted)">'+LL.fmt(v)+LL.unit+'</span></span><div class="track"><i style="width:'+w+'%;background:'+LL.color(v)+'"></i></div><span class="rk">#'+rankOf(k,s.code)+'/36</span></div>'}).join("")+'</div>';
+  h+='<div style="margin-top:10px"><button type="button" class="linkbtn" data-pin="st">☆ Pin '+esc(s.name)+' to My places</button></div>';
+  if(SCH&&SCH.state[s.code])h+='<div class="sect"><span class="lbl">State flagship schemes</span><div class="chips">'+SCH.state[s.code].map(function(x){return '<button type="button" class="chip" data-sch="'+s.code+'">'+esc(x.n)+'</button>'}).join("")+'</div></div>';
+  h+='<div class="sect"><span class="lbl">Exposure</span><div class="chips"><span class="chip">Borders: '+esc(s.borders)+'</span>'+(s.coast?'<span class="chip">Coastline</span>':'')+(s.zone==="V"?'<span class="chip">Highest seismic hazard</span>':'')+'</div></div>';
+  if(distF){var ds=distF.filter(function(x){return x.properties.code===s.code}).sort(function(a,b){return dval(curLayer,b)-dval(curLayer,a)});var mx=Math.max.apply(null,ds.map(function(x){return Math.abs(dval(curLayer,x))}))||1;
+    h+='<div class="sect"><span class="lbl">Districts by '+L.name+' ('+ds.length+')</span><div class="dtl">'+ds.slice(0,8).map(function(x){var v=dval(curLayer,x);
+      return '<button type="button" data-dt="'+x.properties.dt_code+'"><span>'+esc(x.properties.district)+'</span><span class="mini"><i style="width:'+Math.abs(v)/mx*100+'%;background:'+L.color(v)+'"></i></span><span class="num" style="text-align:right;font-size:11.5px">'+L.fmt(v)+L.unit+'</span></button>'}).join("")+'</div></div>'}
+  h+='<div class="sect"><span class="lbl">Signals here ('+evs.length+')</span>'+(evs.length?evs.slice(0,4).map(evHtml).join(""):'<p class="note" style="margin:0">No signals logged for '+esc(s.name)+' in this cycle.</p>')+'</div>';
+  $("#pane-dossier").innerHTML=h;
+}
+$("#pane-dossier").addEventListener("click",function(e){
+  var b=e.target.closest("[data-dt]");if(b){var d=distF.filter(function(x){return x.properties.dt_code===b.dataset.dt})[0];if(d){gran="district";document.querySelectorAll("#gran button").forEach(function(x){x.setAttribute("aria-pressed",x.dataset.g==="district")});selectDistrict(d);zoomTo(STATEF[d.properties.code])}return}
+  var sb=e.target.closest("[data-sch]");if(sb){schTab="state";schSt=sb.dataset.sch;schSec=null;renderSchemes();$("#schemesCard").scrollIntoView({behavior:"smooth"});return}
+  if(e.target.closest("[data-back]")){sel.dt=null;paint();renderDossier()}
+  var pin=e.target.closest("[data-pin]");if(pin){if(pin.dataset.pin==="dt"&&sel.dt){var c=d3.geoCentroid(sel.dt);addPlace({name:sel.dt.properties.district,ll:[+c[0].toFixed(3),+c[1].toFixed(3)],st:sel.st})}else{addPlace({name:BY[sel.st].name,ll:STCAP[sel.st],st:sel.st})}}});
+
+/* ---------- signals ---------- */
+var activeDoms=[],stFilter=null;
+function ago(m){return m<60?m+" min ago":m<1440?Math.floor(m/60)+" h "+(m%60)+" m ago":Math.floor(m/1440)+" d ago"}
+function evHtml(e){return '<button type="button" class="ev'+(e.isNew?" new":"")+'" data-st="'+e.st+'" data-id="'+e.id+'"><span class="sev" style="background:'+SEVC[e.sev]+'"></span><span><div class="et">'+esc(e.t)+'</div><div class="em"><span>'+DOM[e.dom]+'</span><span>'+esc(BY[e.st].name)+'</span><span>'+esc(e.src)+(e.n>1?' +'+(e.n-1)+' more':'')+'</span>'+(e.kind?'<span style="color:'+({official:"var(--peacock)",alert:"var(--high)",derived:"var(--accent)",press:"var(--muted)",social:"#8C6CE4"}[e.kind])+';font-weight:600">'+({official:"Official",alert:"NDMA alert",derived:"Derived",press:"Press",social:"Social"}[e.kind])+'</span>':'')+'<span class="num">'+ago(e.ago)+'</span>'+(e.url&&/^https:\/\//.test(e.url)?'<a href="'+esc(e.url)+'" target="_blank" rel="noopener" style="color:var(--peacock)">Source ↗</a>':'')+'</div></span></button>'}
+var kindF=null;
+function renderFilters(){$("#filters").innerHTML='<button type="button" data-d="" aria-pressed="'+(!activeDoms.length&&!stFilter&&!kindF)+'">All</button>'+(LIVE.signals?["alert","official","press","social","derived"].map(function(k){return '<button type="button" data-k="'+k+'" aria-pressed="'+(kindF===k)+'">'+{alert:"NDMA alerts",official:"Official",press:"Press",social:"Social",derived:"Derived"}[k]+'</button>'}).join(""):"")+(focus?'<button type="button" data-clearfocus="1" aria-pressed="true">'+esc(BY[focus].name)+' ✕</button>':"")+(stFilter?'<button type="button" data-clearst="1" aria-pressed="true">'+esc(BY[stFilter].name)+' ✕</button>':'')+Object.keys(DOM).map(function(d){return '<button type="button" data-d="'+d+'" aria-pressed="'+(activeDoms.indexOf(d)>-1)+'">'+DOM[d]+'</button>'}).join("")}
+function filterToState(c){stFilter=c;activeDoms=[];renderFilters();renderStream()}
+$("#filters").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;if(b.dataset.clearfocus){setFocus(null);return}if(b.dataset.k){kindF=kindF===b.dataset.k?null:b.dataset.k}else if(b.dataset.clearst){stFilter=null}else{if(!b.dataset.d)kindF=null;var d=b.dataset.d;if(!d){activeDoms=[];stFilter=null}else{var i=activeDoms.indexOf(d);if(i>-1)activeDoms.splice(i,1);else activeDoms.push(d)}}renderFilters();renderStream()});
+$("#q").addEventListener("input",renderStream);
+function renderStream(){var q=$("#q").value.trim().toLowerCase();
+  var list=EV.filter(function(e){return (!kindF||e.kind===kindF)&&(!activeDoms.length||activeDoms.indexOf(e.dom)>-1)&&(!(stFilter||focus)||e.st===(stFilter||focus))&&(!q||(e.t+" "+BY[e.st].name+" "+e.src+" "+DOM[e.dom]).toLowerCase().indexOf(q)>-1)}).sort(function(a,b){return a.ago-b.ago});
+  $("#stream").innerHTML=list.length?list.map(evHtml).join(""):'<p class="note">No signals match. Clear the search or pick another domain.</p>';
+  var c={};EV.forEach(function(e){c[e.sev]=(c[e.sev]||0)+1});$("#streamCount").textContent=list.length+" of "+EV.length+" · "+(c[4]||0)+" critical, "+(c[3]||0)+" high";$("#sigCount").textContent=EV.length;
+  var tsrc=focus?EV.filter(function(e){return e.st===focus}):EV;if(tsrc.length<3)tsrc=EV;
+  var tk=tsrc.slice().sort(function(a,b){return a.ago-b.ago}).map(function(e){return '<button type="button" data-id="'+e.id+'"><i style="background:'+SEVC[e.sev]+'"></i><b class="num" style="font-weight:500;color:var(--muted)">'+e.st+'</b>'+esc(e.t)+'</button>'}).join("");
+  $("#ticker").innerHTML=tk+tk;
+}
+function focusEvent(id){var e=EV[id];if(!e)return;selectState(e.st,false);if(e.ll&&mapReady){var p=proj(e.ll),k=Math.max(T.k,4),pad=fitPad();svg.transition().duration(750).call(zoom.transform,d3.zoomIdentity.translate(pad.l+(W-pad.l-pad.r)/2-k*p[0],pad.t+(H-pad.t-pad.b)/2-k*p[1]).scale(k))}}
+document.addEventListener("click",function(e){var b=e.target.closest("[data-id]");if(!b||b.closest("#map"))return;focusEvent(+b.dataset.id)});
+var streaming=true,ei=0;
+$("#streamBtn").addEventListener("click",function(){streaming=!streaming;this.setAttribute("aria-pressed",streaming);this.textContent=streaming?"Pause":"Resume"});
+setInterval(function(){if(!streaming)return;if(!LIVE.signals)EV.forEach(function(e){e.ago+=1;e.isNew=false});
+  if(ei<EXTRA.length&&!FEED.meta){var x=EXTRA[ei++];EV.push({id:EV.length,sev:x[0],dom:x[1],st:x[2],t:x[3],src:x[4],ago:0,ll:x[6]||P[x[5]],isNew:true});
+    computePulse();renderTop();if(mapReady){paint();buildPoints()}renderDossier();evalRules();toast("New signal · "+BY[x[2]].name)}
+  renderStream()},12000);
+
+/* ---------- brief ---------- */
+function renderBrief(){if(LIVE.air||LIVE.weather||LIVE.fires){liveBrief();return}var C={h:["High","var(--good)"],m:["Moderate","var(--warn)"],l:["Low","var(--faint)"]};function c(k){return '<span class="conf" style="color:'+C[k][1]+'">'+C[k][0]+'</span>'}
+  $("#brief").innerHTML='<div class="lead">Air quality is the dominant national stressor this cycle: the Indo-Gangetic plain from Punjab to Bihar sits in Poor to Very Poor bands under a fog-and-stubble inversion, while the south watches a Bay of Bengal system.</div><ul>'
+  +'<li>'+c("h")+'NCR AQI is likely to stay above 300 for 48 h; low wind and continuing fires in Punjab and Haryana keep GRAP Stage III in place.</li>'
+  +'<li>'+c("m")+'The Andaman Sea low is likely to become a depression and track west-north-west; coastal Tamil Nadu, Puducherry and south Andhra face heavy rain from Thursday.</li>'
+  +'<li>'+c("h")+'Fog is the main transport risk: morning delays on Northern and East Central Railway, CAT-III operations at Delhi, Lucknow and Patna.</li>'
+  +'<li>'+c("m")+'Seismic activity is within normal range for the Andaman and north-east belts; nothing above M4.5 inside India.</li>'
+  +'<li>'+c("l")+'Onion and tomato arrivals are thin after unseasonal rain in Maharashtra and Karnataka; a further price rise is possible but not yet in arrivals data.</li>'
+  +'<li>'+c("m")+'Digital: one CERT-In critical advisory open; UPI success above 98% with one brief issuer-side dip.</li></ul>'}
+
+/* ---------- below-fold panels ---------- */
+function renderPanels(){
+  $("#frontiers").innerHTML=FRONT.map(function(f){var m="";for(var i=1;i<=5;i++)m+='<i style="background:'+(i<=f[2]?SEVC[Math.min(4,f[2]+1)]:"")+'"></i>';
+    return '<li><div class="row"><b class="nm">'+f[0]+'</b><span class="meter" aria-label="Level '+f[2]+' of 5">'+m+'</span></div><div style="font-size:12.5px;color:var(--muted)">'+f[3]+'</div></li>'}).join("");
+  $("#quakes tbody").innerHTML=focusQ().map(function(q){var col=q[3]>=4?"var(--high)":q[3]>=3?"var(--warn)":"var(--muted)";return '<tr><td class="num">'+esc(q[0])+'</td><td>'+esc(q[1])+'</td><td class="n" style="color:'+col+';font-weight:600">'+q[3].toFixed(1)+'</td><td class="n">'+q[4]+'</td></tr>'}).join("");
+  $("#aqi").innerHTML=AQS.filter(function(a){return !focus||a[1]===focus}).sort(function(a,b){return b[2]-a[2]}).slice(0,10).map(function(a){var b=aqiBand(a[2]);return '<li><div class="row"><span>'+a[0]+' <span style="color:var(--muted);font-size:12px">'+a[1]+'</span></span><span><span class="num" style="font-weight:600">'+a[2]+'</span> <span style="font-size:11.5px;color:var(--muted)">'+b[2]+'</span></span></div><div class="hbar"><i style="width:'+Math.min(100,a[2]/500*100)+'%;background:'+b[1]+'"></i></div></li>'}).join("");
+  var Wx=LIVE.weather?liveWx(focus):[["Low-pressure area · south Andaman Sea","Likely depression in 36 h, moving WNW toward Tamil Nadu–Andhra coast",3],["North-east monsoon","Active over coastal TN, Puducherry, south AP; season rain +11% vs normal",2],["Dense fog belt","Punjab to Bihar, visibility below 50 m in early morning",3],["Cold wave","Kashmir valley and Ladakh; Leh −9.4 °C",2],["Fire hotspots, 24 h","Punjab 412 · MP 263 · UP 207 · Haryana 138",3],["Western disturbance","Fresh WD reaches western Himalaya Saturday; snow at higher reaches",1]];
+  $("#weather").innerHTML=Wx.map(function(w){return '<li style="grid-template-columns:4px 1fr;display:grid;gap:10px"><span style="border-radius:2px;background:'+SEVC[w[2]]+'"></span><span><b>'+esc(w[0])+'</b><div style="font-size:12.5px;color:var(--muted)">'+esc(w[1])+'</div></span></li>'}).join("");
+  function walk(seed,start,vol,n){var r=rng(seed),v=start,a=[];for(var i=0;i<n;i++){v=v*(1+(r()-.48)*vol);a.push(v)}return a}
+  function spark(a){var w=300,h=30,mn=Math.min.apply(null,a),mx=Math.max.apply(null,a),sx=w/(a.length-1),sy=function(v){return h-3-(v-mn)/(mx-mn||1)*(h-6)},pts=a.map(function(v,i){return (i*sx).toFixed(1)+","+sy(v).toFixed(1)}).join(" ");
+    return '<svg class="spark" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,'+h+' '+pts+' '+w+','+h+'" fill="currentColor" opacity=".12"/><polyline points="'+pts+'" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>'}
+  $("#markets").innerHTML=[["Nifty 50","pts",24800,.012,11,0],["Sensex","pts",81600,.011,12,0],["Bank Nifty","pts",53200,.014,13,0],["USD / INR","₹",86.4,.003,14,2],["Brent crude","$/bbl",71,.02,15,2],["MCX Gold","₹/10 g",96500,.009,16,0],["10-yr G-sec","%",6.38,.004,17,2]].map(function(m){var a=walk(m[4],m[2],m[3],30),l=a[29],p=a[28],ch=(l-p)/p*100;
+    return '<div class="mk"><span><b>'+m[0]+'</b> <span style="color:var(--muted);font-size:11.5px">'+m[1]+'</span></span><span class="p">'+(m[5]?inr2.format(l):inr.format(Math.round(l)))+'</span><span></span><span class="ch '+(ch>=0?"up":"dn")+'">'+(ch>=0?"▲ +":"▼ ")+ch.toFixed(2)+'%</span>'+spark(a)+'</div>'}).join("");
+  var Z=[["Northern","NR",58,41],["North Central","NCR",61,33],["East Central","ECR",64,29],["Eastern","ER",76,14],["Western","WR",88,5],["Central","CR",86,6],["Southern","SR",91,3],["South Central","SCR",89,4],["Northeast Frontier","NFR",79,9]];
+  $("#rail tbody").innerHTML=Z.map(function(z){var c=z[2]<65?"var(--crit)":z[2]<80?"var(--warn)":"var(--good)";return '<tr><td>'+z[0]+' <span style="color:var(--muted)">'+z[1]+'</span></td><td class="n" style="color:'+c+';font-weight:600">'+z[2]+'%</td><td class="n">'+z[3]+'</td></tr>'}).join("");
+  $("#air tbody").innerHTML=AIRPORTS.map(function(a){var c=a[4]>=40?"var(--crit)":a[4]>=20?"var(--warn)":"var(--good)";return '<tr><td>'+a[0]+' · '+a[1]+'</td><td class="n">'+inr.format(a[3])+'</td><td class="n" style="color:'+c+'">'+a[4]+' min</td></tr>'}).join("");
+  $("#digital").innerHTML='<div><span class="lbl">UPI success</span><b>98.6%</b></div><div><span class="lbl">UPI txns today</span><b>64.2 cr</b></div><div><span class="lbl">CERT-In open</span><b style="color:var(--high)">3</b></div><div><span class="lbl">Internet health</span><b style="color:var(--good)">Normal</b></div>';
+  $("#outages").innerHTML=[["Telecom data services · Chennai circle","32 min, resolved",2],["Issuer bank UPI declines · Mumbai","25 min, resolved",2],["State e-district portal · Bihar","Degraded, ongoing",3],["Regional internet suspension","None active this cycle",1]].map(function(o){return '<li><div class="row"><span class="nm">'+o[0]+'</span><span style="width:8px;height:8px;border-radius:50%;flex:none;background:'+SEVC[o[2]]+'"></span></div><div style="font-size:12px;color:var(--muted)">'+o[1]+'</div></li>'}).join("");
+  $("#sowing").innerHTML='<span class="lbl">Rabi sowing, lakh ha · actual vs normal to date</span>'+[["Wheat",182,198],["Pulses",84,92],["Rapeseed & mustard",74,71],["Rabi rice",6,9]].map(function(c){var p=c[1]/c[2]*100;return '<div style="margin-top:9px"><div class="row" style="font-size:12.5px"><span>'+c[0]+'</span><span class="num">'+c[1]+' / '+c[2]+' <span class="'+(p>=100?"up":"dn")+'">'+Math.round(p)+'%</span></span></div><div class="hbar" style="height:8px"><i style="width:'+Math.min(100,p)+'%;background:var(--peacock)"></i></div></div>'}).join("");
+  $("#mandi tbody").innerHTML=[["Onion","Lasalgaon, MH",2840,9.1],["Tomato","Kolar, KA",1960,14.2],["Potato","Agra, UP",1320,-3.4],["Wheat","Indore, MP",2610,0.8],["Mustard","Bharatpur, RJ",6120,1.9]].map(function(m){return '<tr><td>'+m[0]+'</td><td style="color:var(--muted)">'+m[1]+'</td><td class="n">'+inr.format(m[2])+'</td><td class="n '+(m[3]>=0?"dn":"up")+'">'+(m[3]>=0?"+":"")+m[3].toFixed(1)+'%</td></tr>'}).join("");
+  $("#sources").innerHTML=[["IMD & RSMC New Delhi","Warnings, cyclone bulletins, district nowcasts, rainfall departures"],["CPCB CAAQMS","Hourly AQI from 500+ stations; CAQM GRAP orders"],["National Center for Seismology","Earthquake catalogue for India and region"],["NASA FIRMS","VIIRS and MODIS fire hotspots"],["Grid-India","Frequency, demand met, regional load, renewables"],["NSE · BSE · RBI · MCX · CCIL","Indices, reference rate, commodities, G-sec yields"],["NTES / CRIS · AAI · DGCA","Train running status, airport movements, delays"],["NPCI · CERT-In","UPI volumes and success rates; security advisories"],["Agmarknet · Agriculture Ministry","Mandi arrivals and prices; weekly sowing bulletin"],["PIB · MEA · MoD","Official releases for security and foreign-affairs signals"],["INCOIS","Tsunami early warning and ocean state"],["Census 2011 · BIS IS 1893","Population base and seismic zoning in dossiers"]].map(function(x){return '<div><b>'+x[0]+'</b><p>'+x[1]+'</p></div>'}).join("");
+}
+var hzR=rng(5);
+function renderGrid(){var hz=49.95+hzR()*0.11;$("#hz").textContent=hz.toFixed(2);$("#needle").style.left="calc("+Math.max(0,Math.min(100,(hz-49.8)/0.4*100))+"% - 1px)";
+  var R=[["Northern","NR",62.4,8.1,24],["Western","WR",68.9,5.3,31],["Southern","SR",58.2,3.9,38],["Eastern","ER",27.6,6.7,9],["North-Eastern","NER",3.4,7.2,14]];
+  $("#gw").textContent=R.reduce(function(a,r){return a+r[2]},0).toFixed(1)+" GW";
+  $("#regions tbody").innerHTML=R.map(function(r){return '<tr><td>'+r[0]+' <span style="color:var(--muted)">'+r[1]+'</span></td><td class="n">'+r[2].toFixed(1)+'</td><td class="n up">+'+r[3].toFixed(1)+'%</td><td class="n">'+r[4]+'%</td></tr>'}).join("")}
+setInterval(function(){if(streaming)renderGrid()},4000);
+
+/* ---------- rules ---------- */
+var RULES=store("drishti-rules");if(!Array.isArray(RULES))RULES=[{l:"aqi",s:"ALL",op:"gt",v:300,ex:1},{l:"fire",s:"PB",op:"gt",v:250,ex:1},{l:"quake",s:"ALL",op:"gt",v:4,ex:1}];
+function initRuleForm(){$("#rLayer").innerHTML=Object.keys(LAYERS).map(function(k){return '<option value="'+k+'">'+LAYERS[k].name+'</option>'}).join("");
+  $("#rScope").innerHTML='<option value="ALL">Any state or UT</option>'+S.slice().sort(function(a,b){return a.name<b.name?-1:1}).map(function(s){return '<option value="'+s.code+'">'+esc(s.name)+'</option>'}).join("")}
+$("#ruleForm").addEventListener("submit",function(e){e.preventDefault();var v=parseFloat($("#rVal").value);if(isNaN(v)){toast("Enter a number for the threshold");return}
+  RULES.push({l:$("#rLayer").value,s:$("#rScope").value,op:$("#rOp").value,v:v});store("drishti-rules",RULES);evalRules();toast("Rule added")});
+$("#rules").addEventListener("click",function(e){var b=e.target.closest(".x");if(b){RULES.splice(+b.dataset.i,1);store("drishti-rules",RULES);evalRules();toast("Rule removed");return}
+  var p=e.target.closest("[data-pick]");if(p){selectState(p.dataset.pick,true);$("#mapbox").scrollIntoView({behavior:"smooth"})}});
+function evalRules(){tripped={};
+  if(!RULES.length){$("#rules").innerHTML='<p class="note">No rules yet. Add one above, for example AQI above 300 anywhere.</p>'}
+  else $("#rules").innerHTML=RULES.map(function(r,i){var L=LAYERS[r.l],pool=r.s==="ALL"?S:[BY[r.s]],hit=pool.filter(function(s){var v=val(r.l,s.code);return r.op==="gt"?v>r.v:v<r.v});
+    hit.forEach(function(s){tripped[s.code]=1});
+    return '<div class="rule"><div class="row"><span><b>'+L.name+'</b> '+(r.op==="gt"?"above":"below")+' <span class="num">'+r.v+L.unit+'</span> in '+(r.s==="ALL"?"any state or UT":esc(BY[r.s].name))+(r.ex?' <span class="chip">example</span>':'')+'</span><button type="button" class="x" data-i="'+i+'">Remove</button></div>'
+     +(hit.length?'<div class="chips"><span class="trig">Tripped · '+hit.length+'</span>'+hit.map(function(s){return '<button type="button" class="chip" data-pick="'+s.code+'">'+s.code+' '+L.fmt(val(r.l,s.code))+L.unit+'</button>'}).join("")+'</div>':'<span class="ok">Clear</span>')+'</div>'}).join("");
+  if(mapReady)paint()}
+
+/* ---------- live feeds ---------- */
+var RAINCELLS=[],HOURS=null,hIdx=null,SAMPLE_LAYERS={rain:LAYERS.rain};
+var PLACES=store("drishti-places");if(!Array.isArray(PLACES))PLACES=[];
+var FEEDSRC={aqi:"air",heat:"weather",cold:"weather",rain:"weather",fire:"fires",quake:"quakes"};
+function hhmm(s){return s?s.slice(11,16):"—"}
+function istDate(s){return new Date(s+":00+05:30")}
+function srcLine(layer){var f=FEEDSRC[layer];
+  if(layer==="pulse")return '<div class="src-line"><i style="background:'+(LIVE.aqi?"var(--good)":"var(--faint)")+'"></i>Composite of the live layers'+(LIVE.aqi?"":" (sample)")+'; power demand is sample</div>';
+  if(f&&FEED[f]&&LIVE[layer])return '<div class="src-line"><i style="background:var(--good)"></i>Live · '+esc(FEED[f].src||f)+' · updated '+hhmm(FEED[f].at)+' IST</div>';
+  return '<div class="src-line"><i style="background:var(--faint)"></i>Sample data, not a live reading</div>'}
+function wxVis(){if(!gWx)return;gWx.style("display",OVL.weather.on&&!LIVE.weather?null:"none")}
+function setBadges(){document.querySelectorAll(".badge[data-feed2]").forEach(function(b){var f=FEED[b.dataset.feed2];b.textContent=f?"Live · "+hhmm(f.at):"Waiting";b.classList.toggle("live",!!f)});document.querySelectorAll(".badge[data-feed]").forEach(function(b){var f=b.dataset.feed,ok=FEED[f]&&LIVE[{air:"aqi",weather:"heat",quakes:"quake"}[f]];
+  b.textContent=ok?"Live · "+hhmm(FEED[f].at):"Sample";b.classList.toggle("live",!!ok)});
+  var m=FEED.meta,okn=0,tot=0;if(m&&m.feeds){Object.keys(m.feeds).forEach(function(k){tot++;if(m.feeds[k].ok&&!m.feeds[k].stale)okn++})}
+  if(m&&tot){$("#feedTxt").textContent="Live · "+hhmm(m.updated)+" IST";$("#feedPill").title=okn+" of "+tot+" feeds fresh at last refresh";
+    $("#feedStatus").innerHTML='<span class="lbl">Feed status · last refresh '+esc(m.updated.replace("T"," "))+' IST</span><div class="chips" style="margin-top:6px">'+Object.keys(m.feeds).map(function(k){var x=m.feeds[k];return '<span class="chip" style="border-color:'+(x.ok&&!x.stale?"var(--good)":"var(--warn)")+'">'+esc(k)+' · '+(x.ok&&!x.stale?"fresh":"kept previous")+'</span>'}).join("")+'</div>'}
+}
+function noLive(msg){$("#feedTxt").textContent=msg;$("#feedPill").title="Showing sample data"}
+var FEED_KEYS=["meta","air","weather","fires","quakes","cyclones","news","alerts","official","world","social","schemenews"],lastUpdated=null;
+/* Live data: the hourly GitHub Action force-pushes fresh JSON to the "feeds" branch; the copy in /data is a fallback snapshot. */
+var DATA_BASES=["https://raw.githubusercontent.com/r3n1sh/drishti/feeds/data/","data/"],DATA_BASE=DATA_BASES[0];
+function connectFeeds(){
+  function load(first){fetch(DATA_BASE+"meta.json?t="+Date.now(),{cache:"no-store"}).catch(function(e){if(DATA_BASE!==DATA_BASES[1]){DATA_BASE=DATA_BASES[1];return fetch(DATA_BASE+"meta.json?t="+Date.now(),{cache:"no-store"})}throw e})
+      .then(function(r){if(!r.ok){if(DATA_BASE!==DATA_BASES[1]){DATA_BASE=DATA_BASES[1];return fetch(DATA_BASE+"meta.json?t="+Date.now(),{cache:"no-store"})}throw 0}return r}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(m){
+      if(!first&&m.updated===lastUpdated)return;lastUpdated=m.updated;FEED.meta=m;queueApply("meta");
+      FEED_KEYS.slice(1).forEach(function(k){fetch(DATA_BASE+k+".json?v="+encodeURIComponent(m.updated),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(d){if(d){FEED[k]=d;queueApply(k)}}).catch(function(){})})})
+    .catch(function(){if(first)noLive("Sample data")})}
+  load(true);setInterval(function(){load(false)},5*60*1000);
+}
+var qa,newsDirty=false;
+function queueApply(k){if(k==="news"||k==="alerts"||k==="official"||k==="social")newsDirty=true;clearTimeout(qa);qa=setTimeout(function(){applyAll(true)},150)}
+function applyAll(full){
+  DV={};
+  var a=FEED.air;
+  if(a&&a.hours&&a.cities){LIVE.aqi=true;HOURS=a.hours;if(hIdx==null||hIdx>HOURS.length-1)hIdx=HOURS.length-1;
+    var m={};AQS=[];a.cities.forEach(function(c){var v=c.aqi[hIdx];if(v==null)return;AQS.push([c.n,c.st,v,c.ll]);if(m[c.st]==null||v>m[c.st])m[c.st]=v});
+    Object.keys(m).forEach(function(k){AQI[k]=m[k]})}
+  var w=FEED.weather;
+  if(w&&w.cities&&w.days){LIVE.weather=LIVE.heat=LIVE.cold=LIVE.rain=true;LAYERS.rain=RAIN_LIVE;
+    var ti=w.days.indexOf(w.today);if(ti<0)ti=Math.min(7,w.days.length-1);
+    var rs={},rc={},hx={},cx={};RAINCELLS=[];
+    w.cities.forEach(function(c){var wk=0;for(var i=Math.max(0,ti-6);i<=ti;i++)wk+=c.rain[i]||0;rs[c.st]=(rs[c.st]||0)+wk;rc[c.st]=(rc[c.st]||0)+1;
+      if(c.tmax[ti]!=null&&(hx[c.st]==null||c.tmax[ti]>hx[c.st]))hx[c.st]=c.tmax[ti];if(c.tmin[ti]!=null&&(cx[c.st]==null||c.tmin[ti]<cx[c.st]))cx[c.st]=c.tmin[ti];
+      var today=c.rain[ti]||0,tmr=c.rain[ti+1]||0;if(today>=5||tmr>=15)RAINCELLS.push({n:c.n,st:c.st,ll:c.ll,today:today,wk:wk,tmr:tmr})});
+    Object.keys(rs).forEach(function(k){RAIN[k]=Math.round(rs[k]/rc[k]*10)/10});Object.keys(hx).forEach(function(k){HEAT[k]=hx[k]});Object.keys(cx).forEach(function(k){COLD[k]=cx[k]})}
+  LIVE.cyclones=!!(FEED.cyclones&&FEED.cyclones.list&&FEED.cyclones.list.length);
+  var tEnd=HOURS?istDate(HOURS[hIdx]).getTime()+3600e3:Date.now()+3600e3;
+  var f=FEED.fires;
+  if(f&&f.pts){LIVE.fire=LIVE.fires=true;var by={};FIRES=[];
+    var atNow=!HOURS||hIdx===HOURS.length-1;f.pts.forEach(function(p){var tt=istDate(p[3]).getTime();if(!atNow&&(tt>tEnd||tt<tEnd-24*3600e3))return;FIRES.push([p[0],p[1],[.2,.55,.95][p[4]]||.55,p[2],p[3]]);by[p[5]]=(by[p[5]]||0)+1});
+    S.forEach(function(s){FIRE[s.code]=by[s.code]||0})}
+  var q=FEED.quakes;
+  if(q&&q.list){LIVE.quake=LIVE.quakes=true;var bq={};QUAKES=[];
+    q.list.forEach(function(x){var tt=istDate(x.t).getTime();if(tt>tEnd||tt<tEnd-7*24*3600e3)return;QUAKES.push([x.t.slice(5,10).replace("-","/")+" "+x.t.slice(11),x.place,x.st||"—",x.mag,x.depth,x.ll]);if(x.st)bq[x.st]=(bq[x.st]||0)+1});
+    S.forEach(function(s){QUAKE[s.code]=bq[s.code]||0})}
+  if(FEED.news||FEED.alerts||FEED.official||FEED.social){buildSignals();ei=EXTRA.length;LIVE.signals=true}
+  computePulse();renderConsole();renderTop();if(mapReady){wxVis();drawAlerts();paint();buildPoints()}renderDossier();renderFilters();renderStream();renderPanels();renderBrief();renderWorld();renderSocial();renderSchemes();evalRules();setBadges();updateTime();
+  if($("#pane-places").hidden===false)renderPlaces();if($("#pane-compare").hidden===false)renderCompare();
+}
+/* merged signals: press + official + NDMA alerts + derived */
+function minsAgo(s){return Math.max(0,Math.round((Date.now()-istDate(s).getTime())/60000))}
+function buildSignals(){var out=[];
+  ((FEED.news&&FEED.news.items)||[]).forEach(function(n){if(BY[n.st]&&DOM[n.dom])out.push({sev:n.sev,dom:n.dom,st:n.st,t:n.t,src:n.src||"news",url:n.url,ago:minsAgo(n.seen),n:n.n||1,kind:"press"})});
+  ((FEED.official&&FEED.official.items)||[]).forEach(function(n){if(BY[n.st])out.push({sev:n.sev,dom:DOM[n.dom]?n.dom:"economy",st:n.st,t:n.t,src:n.src,url:n.url,ago:minsAgo(n.seen),kind:"official"})});
+  var grp={};((FEED.alerts&&FEED.alerts.list)||[]).forEach(function(a){if(!BY[a.st])return;var k=a.event+"|"+a.st+"|"+a.sender;(grp[k]=grp[k]||[]).push(a)});
+  Object.keys(grp).forEach(function(k){var g=grp[k],a=g[0],sev=Math.max.apply(null,g.map(function(x){return x.sev}));
+    out.push({sev:sev,dom:/quake|tsunami/i.test(a.event)?"quake":"weather",st:a.st,t:a.event+" warning"+(g.length>1?" for "+g.length+" areas: "+a.area.split(",").slice(0,3).join(",")+"…":": "+(a.head.length>150?a.head.slice(0,150)+"…":a.head)),src:a.sender,url:a.url,ago:a.eff?minsAgo(a.eff):0,kind:"alert"})});
+  ((FEED.social&&FEED.social.items)||[]).forEach(function(x){if(x.st&&BY[x.st])out.push({sev:1,dom:DOM[x.dom]?x.dom:"infra",st:x.st,t:x.t.length>160?x.t.slice(0,160)+"…":x.t,src:x.plat+" · "+x.who,url:x.url,ago:minsAgo(x.seen),kind:"social"})});
+  derivedSignals().forEach(function(d){out.push(d)});
+  out.sort(function(a,b){return a.ago-b.ago||b.sev-a.sev});
+  out.forEach(function(e,i){var c=STCAP[e.st]||[78,22],r=rng(i*17+3);e.id=i;e.isNew=false;e.live=1;e.ll=e.ll||[c[0]+(r()-.5)*.8,c[1]+(r()-.5)*.8]});
+  EV=out}
+function derivedSignals(){var out=[],tag="Drishti derived";
+  if(FEED.air&&HOURS){var h=hIdx;FEED.air.cities.forEach(function(c){var v=c.aqi[h],p=h>=6?c.aqi[h-6]:null;if(v==null)return;
+    if(v>=400)out.push({sev:4,dom:"air",st:c.st,t:c.n+" AQI "+v+": Severe band",src:tag,ago:0,kind:"derived",ll:c.ll});
+    else if(v>=300)out.push({sev:3,dom:"air",st:c.st,t:c.n+" AQI "+v+": Very poor band",src:tag,ago:0,kind:"derived",ll:c.ll});
+    if(p!=null&&v-p>=50)out.push({sev:v>=200?3:2,dom:"air",st:c.st,t:c.n+" AQI up "+(v-p)+" in 6 h, now "+v,src:tag,ago:0,kind:"derived",ll:c.ll})})}
+  if(FEED.weather){var w=FEED.weather,ti=w.days.indexOf(w.today);if(ti<0)ti=7;w.cities.forEach(function(c){
+    if((c.rain[ti+1]||0)>=64.5)out.push({sev:(c.rain[ti+1]>=115.6?4:3),dom:"weather",st:c.st,t:"Heavy rain forecast for "+c.n+" tomorrow: "+c.rain[ti+1].toFixed(0)+" mm"+(c.rain[ti+1]>=115.6?" (very heavy)":""),src:tag,ago:0,kind:"derived",ll:c.ll});
+    if(c.tmax[ti]!=null&&c.tmax[ti]>=40)out.push({sev:3,dom:"weather",st:c.st,t:c.n+" hits "+c.tmax[ti].toFixed(1)+" °C today",src:tag,ago:0,kind:"derived",ll:c.ll});
+    if(c.tmin[ti]!=null&&c.tmin[ti]<=-3)out.push({sev:2,dom:"weather",st:c.st,t:c.n+" minimum "+c.tmin[ti].toFixed(1)+" °C, hard frost",src:tag,ago:0,kind:"derived",ll:c.ll})})}
+  if(FEED.quakes){FEED.quakes.list.forEach(function(q){if(q.mag>=4.5)out.push({sev:q.mag>=5.5?4:3,dom:"quake",st:q.st||nearestSt(q.ll),t:"M"+q.mag.toFixed(1)+" earthquake, "+q.place,src:"USGS · "+tag,url:q.url,ago:minsAgo(q.t),kind:"derived",ll:q.ll})})}
+  if(LIVE.fires){S.forEach(function(s){if(FIRE[s.code]>=150)out.push({sev:FIRE[s.code]>=300?3:2,dom:"air",st:s.code,t:FIRE[s.code]+" fire hotspots in "+s.name+" in 24 h",src:"NASA FIRMS · "+tag,ago:0,kind:"derived"})})}
+  return out}
+function nearestSt(ll){var n=nearest(Object.keys(STCAP),ll,function(k){return STCAP[k]});return n?n.x:"DL"}
+function drawAlerts(){if(!gAl)return;var list=(OVL.alerts.on&&FEED.alerts&&FEED.alerts.list)||[],shapes=[];
+  list.forEach(function(a){(a.polys||[]).forEach(function(pg){shapes.push({a:a,pg:pg})})});
+  gAl.selectAll("path").data(shapes).join("path").attr("d",function(d){return ring(d.pg)})
+    .attr("fill",function(d){return SEVC[d.a.sev]}).attr("fill-opacity",.3).attr("stroke",function(d){return SEVC[d.a.sev]}).attr("stroke-width",1).attr("vector-effect","non-scaling-stroke").style("cursor","pointer")
+    .on("mousemove",function(ev,d){showTip(ev,'<b>'+esc(d.a.event)+' · '+esc(d.a.sender)+'</b>'+esc(d.a.head)+'<br><span style="color:var(--muted)">Valid until '+esc((d.a.exp||"").replace("T"," "))+' IST</span>')})
+    .on("mouseleave",hideTip).on("click",function(ev,d){ev.stopPropagation();if(BY[d.a.st]){selectState(d.a.st,false);tab("signals");filterToState(d.a.st)}})}
+/* ---------- focus (drill-down) ---------- */
+var focus=null;
+function setFocus(c){focus=c&&BY[c]?c:null;stFilter=null;
+  $("#deskTitle").textContent="Domain desks · "+(focus?BY[focus].name:"All India");$("#clearFocus").hidden=!focus;
+  renderTop();renderFilters();renderStream();renderPanels();renderSocial();renderSchemes()}
+$("#clearFocus").addEventListener("click",function(){$("#zreset").click()});
+function focusQ(){if(!focus)return QUAKES;var c=STCAP[focus];return QUAKES.filter(function(q){return q[2]===focus||(q[5]&&hav(c,q[5])<=500)})}
+
+/* ---------- World → India ---------- */
+var COUNTRY_RX={Pakistan:/pakistan|islamabad|rawalpindi/i,China:/china|chinese|beijing/i,Bangladesh:/bangladesh|dhaka|hasina|yunus/i,Nepal:/nepal|kathmandu/i,"Sri Lanka":/sri lanka|colombo/i,Myanmar:/myanmar|burma/i,Bhutan:/bhutan/i,Afghanistan:/afghan|taliban|kabul/i,Maldives:/maldiv/i,Iran:/iran|tehran/i,"United Arab Emirates":/uae|dubai|abu dhabi|emirat/i,Oman:/oman/i};
+var worldF=null;
+function renderWorld(){var W=(FEED.world&&FEED.world.items)||[];
+  var rc={};W.forEach(function(x){rc[x.region]=(rc[x.region]||0)+1});var regs=Object.keys(rc).sort(function(a,b){return rc[b]-rc[a]}),mx=Math.max.apply(null,regs.map(function(r){return rc[r]}).concat([1]));
+  if(!W.length){$("#worldRegions").innerHTML="";$("#worldList").innerHTML='<li><span class="note">Waiting for the international feed. It refreshes with the others.</span></li>';$("#worldF").innerHTML="";return}
+  $("#worldRegions").innerHTML='<span class="lbl">By region · last 24 h</span>'+regs.map(function(r){return '<button type="button" class="wreg" data-r="'+esc(r)+'" aria-pressed="'+(worldF===r)+'"><span class="row"><span>'+esc(r)+'</span><span class="num">'+rc[r]+'</span></span><span class="hbar"><i style="width:'+(rc[r]/mx*100)+'%;background:var(--peacock)"></i></span></button>'}).join("");
+  var chs=["Security","Trade","Energy","Diaspora","Markets","Climate"];
+  $("#worldF").innerHTML='<button type="button" data-c="" aria-pressed="'+(!worldF)+'">All</button>'+chs.map(function(c){return '<button type="button" data-c="'+c+'" aria-pressed="'+(worldF===c)+'">'+c+'</button>'}).join("");
+  var list=W.filter(function(x){return !worldF||x.region===worldF||(x.ch||[]).indexOf(worldF)>-1}).slice(0,40);
+  $("#worldList").innerHTML=list.map(function(x){return '<li><a class="wlink" href="'+(/^https:\/\//.test(x.url||"")?esc(x.url):"#")+'" target="_blank" rel="noopener">'+esc(x.t)+'</a><div class="em" style="font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap"><span style="color:var(--peacock);font-weight:600">'+esc(x.region)+'</span>'+(x.ch||[]).map(function(c){return '<span class="chip" style="font-size:10.5px;padding:0 6px">'+esc(c)+'</span>'}).join("")+'<span>'+esc(x.src||"")+(x.n>1?' +'+(x.n-1)+' more':'')+'</span><span class="num">'+ago(minsAgo(x.seen))+'</span></div></li>'}).join("")||'<li><span class="note">Nothing in this filter.</span></li>';
+  shadeNb()}
+document.addEventListener("click",function(e){var b=e.target.closest("#worldRegions [data-r]");if(b){worldF=worldF===b.dataset.r?null:b.dataset.r;renderWorld();return}
+  var c=e.target.closest("#worldF [data-c]");if(c){worldF=c.dataset.c||null;renderWorld()}});
+function countryCounts(){var W=(FEED.world&&FEED.world.items)||[],cc={};W.forEach(function(x){Object.keys(COUNTRY_RX).forEach(function(k){if(COUNTRY_RX[k].test(x.t))cc[k]=(cc[k]||0)+1})});return cc}
+function shadeNb(){if(!gNb)return;var on=OVL.world&&OVL.world.on,cc=on?countryCounts():{},mx=Math.max.apply(null,Object.keys(cc).map(function(k){return cc[k]}).concat([1]));
+  gNb.selectAll("path").style("fill",function(f){var n=cc[f.properties.name];return n?"rgba(47,182,168,"+(0.18+0.6*n/mx).toFixed(2)+")":null}).style("cursor",function(f){return cc[f.properties.name]?"pointer":null})
+    .on("mousemove",function(ev,f){var n=cc[f.properties.name];if(n)showTip(ev,'<b>'+esc(f.properties.name)+'</b>'+n+' stories affecting India in 24 h<br><span style="color:var(--muted)">Click to read them</span>')}).on("mouseleave",hideTip)
+    .on("click",function(ev,f){if(!cc[f.properties.name])return;ev.stopPropagation();var reg=f.properties.name==="China"?"China":f.properties.name==="Pakistan"?"Pakistan":/Iran|Emirates|Oman/.test(f.properties.name)?"Gulf & energy":"Neighbourhood";worldF=reg;renderWorld();$("#worldCard").scrollIntoView({behavior:"smooth"})})}
+
+/* ---------- Social pulse ---------- */
+var socialF=null;
+function renderSocial(){var S_=(FEED.social&&FEED.social.items)||[];
+  $("#socialF").innerHTML=S_.length?['','Bluesky','Mastodon'].map(function(p){return '<button type="button" data-p="'+p+'" aria-pressed="'+((socialF||"")===p)+'">'+(p||"All")+'</button>'}).join(""):"";
+  var list=S_.filter(function(x){return (!socialF||x.plat===socialF)&&(!focus||x.st===focus)});
+  if(focus&&!list.length)list=S_.filter(function(x){return !socialF||x.plat===socialF});
+  $("#socialList").innerHTML=list.slice(0,40).map(function(x){return '<li><div class="em" style="font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap"><span style="font-weight:700;color:'+(x.plat==="Bluesky"?"#3B8FE8":"#8C6CE4")+'">'+esc(x.plat)+'</span><span>'+esc(x.who)+'</span>'+(x.st&&BY[x.st]?'<span>'+esc(BY[x.st].name)+'</span>':'')+'<span class="num">'+ago(minsAgo(x.seen))+'</span></div><div style="font-size:13px">'+esc(x.t)+'</div>'+(/^https:\/\//.test(x.url||"")?'<a class="linkbtn" href="'+esc(x.url)+'" target="_blank" rel="noopener">Open post ↗</a>':'')+'</li>'}).join("")||'<li><span class="note">'+(S_.length?"No posts in this filter.":"Waiting for the social feed.")+'</span></li>';
+  if(focus&&S_.length&&!S_.some(function(x){return x.st===focus}))$("#socialList").insertAdjacentHTML("afterbegin",'<li><span class="note">No posts located in '+esc(BY[focus].name)+' yet; showing all.</span></li>')}
+$("#socialF").addEventListener("click",function(e){var b=e.target.closest("[data-p]");if(!b)return;socialF=b.dataset.p||null;renderSocial()});
+
+/* ---------- Schemes ---------- */
+var SCH=null,schTab="national",schSt=null,schSec=null;
+fetch("schemes.json").then(function(r){return r.ok?r.json():null}).then(function(d){if(d){SCH=d;renderSchemes();renderDossier()}}).catch(function(){});
+function renderSchemes(){if(!SCH){$("#schList").innerHTML='<p class="note">Loading schemes…</p>';return}
+  if(focus&&SCH.state[focus]){schTab="state";schSt=focus}
+  var states=Object.keys(SCH.state).sort(function(a,b){return BY[a].name<BY[b].name?-1:1});
+  $("#schTabs").innerHTML='<button type="button" data-tab="national" aria-pressed="'+(schTab==="national")+'">National ('+SCH.national.length+')</button><button type="button" data-tab="state" aria-pressed="'+(schTab==="state")+'">State flagship</button>'
+    +'<label for="schState" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">State</label><select id="schState" style="background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:11.5px"><option value="">All states</option>'+states.map(function(c){return '<option value="'+c+'"'+(c===schSt?" selected":"")+'>'+esc(BY[c].name)+'</option>'}).join("")+'</select>';
+  var pool=schTab==="national"?SCH.national.map(function(x){return Object.assign({lvl:"National"},x)}):[].concat.apply([],states.filter(function(c){return !schSt||c===schSt}).map(function(c){return SCH.state[c].map(function(x){return Object.assign({lvl:BY[c].name,st:c},x)})}));
+  var secs={};pool.forEach(function(x){secs[x.sec]=(secs[x.sec]||0)+1});
+  $("#schSec").innerHTML='<button type="button" data-sec="" aria-pressed="'+(!schSec)+'">All sectors</button>'+Object.keys(secs).sort().map(function(s){return '<button type="button" data-sec="'+esc(s)+'" aria-pressed="'+(schSec===s)+'">'+esc(s)+' · '+secs[s]+'</button>'}).join("");
+  var q=($("#schQ").value||"").trim().toLowerCase();
+  var list=pool.filter(function(x){return (!schSec||x.sec===schSec)&&(!q||(x.n+" "+x.sec+" "+x.ben+" "+(x.who||"")+" "+(x.dept||"")+" "+x.lvl).toLowerCase().indexOf(q)>-1)});
+  $("#schList").innerHTML=list.map(function(x){return '<div class="sch"><div class="row" style="align-items:flex-start"><b>'+esc(x.n)+'</b><span class="chip" style="font-size:10.5px;flex:none">'+esc(x.sec)+'</span></div><div style="font-size:11px;color:var(--muted)">'+esc(x.lvl)+(x.dept?' · '+esc(x.dept):'')+'</div><div style="font-size:12.5px">'+esc(x.ben)+'</div>'+(x.who?'<div style="font-size:11.5px;color:var(--muted)">Who: '+esc(x.who)+'</div>':'')+'<a class="linkbtn" href="'+esc(x.url)+'" target="_blank" rel="noopener">Check eligibility on myScheme ↗</a></div>'}).join("")||'<p class="note">No schemes match.</p>';
+  var N=(FEED.schemenews&&FEED.schemenews.items)||[],fs=schTab==="state"&&schSt?schSt:focus;
+  var nl=N.filter(function(x){return !fs||x.st===fs});if(fs&&!nl.length)nl=N;
+  $("#schNews").innerHTML=nl.slice(0,14).map(function(x){return '<li><a class="wlink" href="'+(/^https:\/\//.test(x.url||"")?esc(x.url):"#")+'" target="_blank" rel="noopener">'+esc(x.t)+'</a><div style="font-size:11px;color:var(--muted)">'+(x.st&&BY[x.st]?esc(BY[x.st].name)+' · ':'National · ')+esc(x.src||"")+' · '+ago(minsAgo(x.seen))+'</div></li>'}).join("")||'<li><span class="note">Scheme news arrives with the next feed refresh.</span></li>';
+  $("#schNote").textContent=SCH.note}
+$("#schTabs").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(!b)return;schTab=b.dataset.tab;schSec=null;if(schTab==="national")schSt=null;renderSchemes()});
+$("#schTabs").addEventListener("change",function(e){if(e.target.id==="schState"){schSt=e.target.value||null;schTab="state";schSec=null;renderSchemes()}});
+$("#schSec").addEventListener("click",function(e){var b=e.target.closest("[data-sec]");if(!b)return;schSec=b.dataset.sec||null;renderSchemes()});
+$("#schQ").addEventListener("input",renderSchemes);
+/* time slider */
+var playT=null;
+function updateTime(){var sl=$("#slider"),pb=$("#play");if(!HOURS){sl.disabled=true;pb.disabled=true;return}
+  sl.disabled=false;pb.disabled=false;sl.max=HOURS.length-1;sl.value=hIdx;var h=HOURS[hIdx],last=hIdx===HOURS.length-1;
+  var d=istDate(h);$("#tlabel").textContent=(last?"Now · ":"")+d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",timeZone:"Asia/Kolkata"})+" "+h.slice(11,16);
+  $("#tsub").textContent=last?"Drag back up to 72 h":(HOURS.length-1-hIdx)+" h ago · AQI hourly, fires 24 h, quakes 7 d"}
+var st_;$("#slider").addEventListener("input",function(){hIdx=+this.value;updateTime();clearTimeout(st_);st_=setTimeout(function(){applyAll()},60)});
+function togglePlay(){if(!HOURS)return;if(playT){clearInterval(playT);playT=null;$("#play").textContent="▶";$("#play").setAttribute("aria-label","Play the last 72 hours");return}
+  if(hIdx>=HOURS.length-1)hIdx=0;$("#play").textContent="❚❚";$("#play").setAttribute("aria-label","Pause");
+  playT=setInterval(function(){if(hIdx>=HOURS.length-1){togglePlay();return}hIdx++;applyAll()},420)}
+$("#play").addEventListener("click",togglePlay);
+function stepHour(d){if(!HOURS)return;hIdx=Math.max(0,Math.min(HOURS.length-1,hIdx+d));applyAll()}
+/* live weather list + brief */
+function liveWx(fc){var w=FEED.weather,ti=w.days.indexOf(w.today);if(ti<0)ti=7;var c=w.cities.filter(function(x){return !fc||x.st===fc});if(!c.length)c=w.cities;
+  var RC=RAINCELLS.filter(function(x){return !fc||x.st===fc});
+  var hot=c.slice().sort(function(a,b){return (b.tmax[ti]||-99)-(a.tmax[ti]||-99)})[0],cold=c.slice().sort(function(a,b){return (a.tmin[ti]||99)-(b.tmin[ti]||99)})[0];
+  var wet=RC.slice().sort(function(a,b){return b.wk-a.wk}),tmr=RC.filter(function(x){return x.tmr>=20}).sort(function(a,b){return b.tmr-a.tmr});
+  var out=[["Hottest today",hot.n+" · "+hot.tmax[ti].toFixed(1)+" °C maximum",hot.tmax[ti]>=40?3:1],["Coldest today",cold.n+" · "+cold.tmin[ti].toFixed(1)+" °C minimum",cold.tmin[ti]<=0?3:cold.tmin[ti]<=5?2:1]];
+  if(wet.length)out.push(["Wettest week",wet.slice(0,3).map(function(x){return x.n+" "+x.wk.toFixed(0)+" mm"}).join(" · "),wet[0].wk>=100?3:2]);
+  out.push(["Heavy rain tomorrow",tmr.length?tmr.slice(0,4).map(function(x){return x.n+" "+x.tmr.toFixed(0)+" mm"}).join(" · "):"No city above 20 mm in the forecast",tmr.length?(tmr[0].tmr>=64?3:2):1]);
+  out.push(["Tropical cyclones",LIVE.cyclones?FEED.cyclones.list.map(function(x){return (x.name||"System")+" ("+(x.level||"—")+")"}).join(" · "):"None active in the North Indian Ocean (GDACS)",LIVE.cyclones?3:1]);
+  if(LIVE.fires&&fc){out.push(["Fire hotspots, 24 h",FIRE[fc]+" in "+BY[fc].name+" · "+FIRES.length+" in India",FIRE[fc]>150?3:FIRE[fc]>20?2:1])}
+  else if(LIVE.fires){var top=S.slice().sort(function(a,b){return FIRE[b.code]-FIRE[a.code]}).slice(0,4);out.push(["Fire hotspots, 24 h",FIRES.length+" in India · "+top.map(function(s){return s.code+" "+FIRE[s.code]}).join(" · "),FIRES.length>800?3:2])}
+  return out}
+function liveBrief(){
+  var C={o:["Observed","var(--good)"],m:["Modelled","var(--warn)"],f:["Forecast","var(--peacock)"],s:["Sample","var(--faint)"]};function c(k){return '<span class="conf" style="color:'+C[k][1]+'">'+C[k][0]+'</span>'}
+  var li=[],lead="";
+  if(LIVE.aqi){var cs=AQS.slice().sort(function(a,b){return b[2]-a[2]}),bad=cs.filter(function(x){return x[2]>200}),b=aqiBand(cs[0][2]);
+    lead="Worst air at this hour is in "+cs[0][0]+" (AQI "+cs[0][2]+", "+b[2]+"). "+bad.length+" of "+cs.length+" tracked cities are in the Poor band or worse"+(bad.length?", led by "+bad.slice(0,4).map(function(x){return x[0]}).join(", "):"")+".";
+    var clean=cs.slice(-3).reverse();li.push(c("m")+"Cleanest air: "+clean.map(function(x){return x[0]+" "+x[2]}).join(", ")+". Values are CAMS model estimates converted to the Indian NAQI, so they can differ from CPCB station readings.")}
+  if(LIVE.fires){var tf=S.slice().sort(function(a,b){return FIRE[b.code]-FIRE[a.code]}).slice(0,3);li.push(c("o")+FIRES.length+" VIIRS fire hotspots in the 24 h window, concentrated in "+tf.map(function(s){return s.name+" ("+FIRE[s.code]+")"}).join(", ")+".")}
+  if(LIVE.quakes){var qs=QUAKES.slice().sort(function(a,b){return b[3]-a[3]});li.push(c("o")+(qs.length?qs.length+" earthquakes of M2.5+ in the region over 7 days; largest M"+(+qs[0][3]).toFixed(1)+", "+qs[0][1]+".":"No M2.5+ earthquakes recorded in the region in 7 days."))}
+  if(LIVE.weather){liveWx(null).forEach(function(x){if(/rain|Cold|Hot|cyclone/i.test(x[0]))li.push(c(/tomorrow/.test(x[0])?"f":"o")+x[0]+": "+x[1]+".")})}
+  if(LIVE.signals){var dc={};EV.forEach(function(e){dc[e.dom]=(dc[e.dom]||0)+1});var top=Object.keys(dc).sort(function(a,b){return dc[b]-dc[a]}).slice(0,3);li.push(c("o")+EV.length+" located news signals in 24 h; most are about "+top.map(function(d){return DOM[d].toLowerCase()+" ("+dc[d]+")"}).join(", ")+".")}
+  li.push(c("s")+"Power, markets, rail, digital and agriculture panels still show sample values.");
+  $("#brief").innerHTML='<div class="lead">'+esc(lead||"Live feeds loaded.")+'</div><ul>'+li.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><p class="note">Generated from the live feeds at '+(HOURS?esc(HOURS[hIdx].replace("T"," ")):"—")+' IST. Rule-based, no AI.</p>'}
+/* places */
+function hav(a,b){var R=6371,dl=(b[1]-a[1])*Math.PI/180,dn=(b[0]-a[0])*Math.PI/180,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[1]*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.sqrt(x))}
+function nearest(list,ll,getLL){var best=null,bd=1e9;list.forEach(function(x){var d=hav(ll,getLL(x));if(d<bd){bd=d;best=x}});return best?{x:best,d:bd}:null}
+function addPlace(pl){if(PLACES.some(function(x){return x.name===pl.name}))return toast(pl.name+" is already in My places");PLACES.push(pl);store("drishti-places",PLACES);toast("Pinned "+pl.name);if(mapReady)buildPoints();renderConsole();tab("places")}
+var CITYLIST=Object.keys(P).sort();
+function renderPlaces(){
+  var h='<span class="lbl">Your pinned places · kept in this browser</span>';
+  h+='<div class="addrow"><label for="plAdd" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">City</label><select id="plAdd">'+(FEED.weather?FEED.weather.cities.map(function(c){return c.n}).sort():CITYLIST).map(function(n){return '<option>'+esc(n)+'</option>'}).join("")+'</select><button type="button" class="btn" id="plAddBtn">Pin city</button></div>';
+  if(!PLACES.length)h+='<p class="note" style="margin-top:12px">No places yet. Pin a city above, or open a state or district on the map and choose “Pin to My places”. Each place gets its own mini-brief here and a star on the map.</p>';
+  PLACES.forEach(function(pl,i){var rows=[];
+    var air=FEED.air?nearest(FEED.air.cities,pl.ll,function(c){return c.ll}):null,aqiNow=air?air.x.aqi[hIdx]:null;
+    var wx=FEED.weather?nearest(FEED.weather.cities,pl.ll,function(c){return c.ll}):null,ti=FEED.weather?Math.max(0,FEED.weather.days.indexOf(FEED.weather.today)):0;
+    var fires=FIRES.filter(function(f){return hav(pl.ll,[f[0],f[1]])<=50}).length,qk=QUAKES.filter(function(q){return hav(pl.ll,q[5])<=300});
+    var sig=EV.filter(function(e){return e.st===pl.st}).length;
+    h+='<div class="place"><div class="row"><b>'+esc(pl.name)+'</b><span style="font-size:11.5px;color:var(--muted)">'+esc(BY[pl.st]?BY[pl.st].name:"")+'</span></div><div class="kv2">'
+      +'<div>AQI'+(air?' · '+esc(air.x.n):'')+'<b style="color:'+(aqiNow!=null?(aqiNow>200?"var(--crit)":aqiNow>100?"var(--warn)":"var(--good)"):"inherit")+'">'+(aqiNow!=null?aqiNow+" "+aqiBand(aqiNow)[2]:AQI[pl.st]+" (state)")+'</b></div>'
+      +'<div>Now<b>'+(wx&&wx.x.t!=null?wx.x.t.toFixed(1)+" °C":HEAT[pl.st]+"° max")+'</b></div>'
+      +'<div>Today<b>'+(wx?wx.x.tmax[ti].toFixed(0)+"° / "+wx.x.tmin[ti].toFixed(0)+"°":"—")+'</b></div>'
+      +'<div>Rain today<b>'+(wx?(wx.x.rain[ti]||0).toFixed(0)+" mm":"—")+'</b></div>'
+      +'<div>Fires ≤50 km<b>'+fires+'</b></div>'
+      +'<div>Quakes ≤300 km<b>'+qk.length+(qk.length?" · M"+Math.max.apply(null,qk.map(function(q){return q[3]})).toFixed(1):"")+'</b></div></div>'
+      +'<div class="row"><span style="font-size:11.5px;color:var(--muted)">'+sig+' news signals in '+esc(pl.st)+'</span><span style="display:flex;gap:12px"><button type="button" class="linkbtn" data-plgo="'+i+'">Show on map</button><button type="button" class="linkbtn" data-plrm="'+i+'" style="color:var(--crit)">Remove</button></span></div></div>'});
+  $("#pane-places").innerHTML=h}
+$("#pane-places").addEventListener("click",function(e){
+  if(e.target.closest("#plAddBtn")){var n=$("#plAdd").value,c=FEED.weather?FEED.weather.cities.filter(function(x){return x.n===n})[0]:null,ll=c?c.ll:P[n];if(!ll)return;
+    var st=c?c.st:(AQS.filter(function(a){return a[0]===n})[0]||[])[1];if(!st){var nn=nearest(Object.keys(STCAP),ll,function(k){return STCAP[k]});st=nn.x}addPlace({name:n,ll:ll,st:st});return}
+  var g=e.target.closest("[data-plgo]");if(g){var pl=PLACES[+g.dataset.plgo];selectState(pl.st,false);flyTo(pl.ll,6);return}
+  var r=e.target.closest("[data-plrm]");if(r){var nm=PLACES[+r.dataset.plrm].name;PLACES.splice(+r.dataset.plrm,1);store("drishti-places",PLACES);renderPlaces();if(mapReady)buildPoints();renderConsole();toast("Removed "+nm)}});
+function flyTo(ll,k){if(!mapReady)return;var p=proj(ll),pad=fitPad();svg.transition().duration(750).call(zoom.transform,d3.zoomIdentity.translate(pad.l+(W-pad.l-pad.r)/2-k*p[0],pad.t+(H-pad.t-pad.b)/2-k*p[1]).scale(k))}
+/* compare */
+var CMP=[null,null];
+function renderCompare(){var a=CMP[0]||sel.st,b=CMP[1]||(a==="KL"?"DL":"KL");CMP=[a,b];
+  var opts=function(v){return S.slice().sort(function(x,y){return x.name<y.name?-1:1}).map(function(s){return '<option value="'+s.code+'"'+(s.code===v?" selected":"")+'>'+esc(s.name)+'</option>'}).join("")};
+  var rows=[["Pulse","pulse"],["Air (AQI)","aqi"],["Fires 24 h","fire"],["Quakes 7 d","quake"],["Max temp","heat"],["Min temp","cold"],[LAYERS.rain.name,"rain"],["Power y/y","power"]];
+  var h='<span class="lbl">Compare two states or UTs</span><div class="addrow"><label for="cmpA" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">First</label><select id="cmpA">'+opts(a)+'</select><label for="cmpB" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Second</label><select id="cmpB">'+opts(b)+'</select></div>';
+  h+='<table class="cmp" style="margin-top:10px"><thead><tr><th></th><th class="n">'+a+'</th><th class="n">'+b+'</th></tr></thead><tbody>';
+  function num(x){return typeof x==="number"?x:parseFloat(x)}
+  [["Population ’11",popFmt(BY[a].pop),popFmt(BY[b].pop),BY[a].pop,BY[b].pop],["Density /km²",inr.format(Math.round(BY[a].pop*1e6/BY[a].area)),inr.format(Math.round(BY[b].pop*1e6/BY[b].area)),BY[a].pop/BY[a].area,BY[b].pop/BY[b].area],["Seismic zone",BY[a].zone,BY[b].zone,null,null]].forEach(function(r){h+='<tr><td>'+r[0]+'</td><td class="n">'+r[1]+'</td><td class="n">'+r[2]+'</td></tr>'});
+  rows.forEach(function(r){var L=LAYERS[r[1]],va=val(r[1],a),vb=val(r[1],b),hiA=asc(r[1])?va<vb:va>vb;
+    h+='<tr><td>'+r[0]+(LIVE[r[1]]?'<span class="livedot"></span>':'')+'</td><td class="n'+(va!==vb&&hiA?" win":"")+'">'+L.fmt(va)+L.unit+'</td><td class="n'+(va!==vb&&!hiA?" win":"")+'">'+L.fmt(vb)+L.unit+'</td></tr>'});
+  var sa=EV.filter(function(e){return e.st===a}).length,sb=EV.filter(function(e){return e.st===b}).length;
+  h+='<tr><td>News signals</td><td class="n">'+sa+'</td><td class="n">'+sb+'</td></tr></tbody></table><p class="note" style="margin-top:8px">Highlighted cells are the more stressed of the pair (higher heat, lower cold, more fires, and so on).</p>';
+  $("#pane-compare").innerHTML=h}
+$("#pane-compare").addEventListener("change",function(e){if(e.target.id==="cmpA")CMP[0]=e.target.value;if(e.target.id==="cmpB")CMP[1]=e.target.value;renderCompare()});
+/* deep links + keyboard */
+function readHash(){var m=(location.hash||"").match(/^#s-([a-z]{2})$/);if(m&&BY[m[1].toUpperCase()]){sel.st=m[1].toUpperCase();var go=function(){if(mapReady)selectState(sel.st,true);else setTimeout(go,300)};go()}}
+window.addEventListener("hashchange",readHash);
+document.addEventListener("keydown",function(e){var tg=e.target.tagName;if(tg==="INPUT"||tg==="SELECT"||tg==="TEXTAREA"||e.metaKey||e.ctrlKey||e.altKey)return;
+  var keys=Object.keys(LAYERS);
+  if(/^[1-9]$/.test(e.key)&&keys[+e.key-1]){curLayer=keys[+e.key-1];store("drishti-layer",curLayer);renderConsole();if(mapReady)paint();renderDossier()}
+  else if(e.key==="/"){e.preventDefault();tab("signals");$("#q").focus()}
+  else if(e.key==="Escape"){$("#zreset").click()}
+  else if(e.key===" "&&HOURS){e.preventDefault();togglePlay()}
+  else if(e.key==="["){stepHour(-1)}else if(e.key==="]"){stepHour(1)}
+  else if(e.key==="d"||e.key==="D"){var b=document.querySelector('#gran button[data-g="'+(gran==="state"?"district":"state")+'"]');if(b)b.click()}});
+
+/* boot */
+computePulse();renderConsole();renderTop();renderDossier();renderFilters();renderStream();renderBrief();renderPanels();renderGrid();initRuleForm();evalRules();
+renderWorld();renderSocial();renderSchemes();readHash();setBadges();connectFeeds();
+})();
+</script>
+
+</body>
+</html>

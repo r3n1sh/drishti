@@ -1,0 +1,48 @@
+name: Refresh feeds
+
+# Every hour: run the fetcher and force-push the JSON to the single-commit "feeds" branch.
+# The site reads that branch through raw.githubusercontent.com, so main's history never grows.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-feeds
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restore last feeds (kept when a source fails)
+        run: |
+          mkdir -p out
+          git fetch --depth=1 origin feeds:feeds 2>/dev/null && git --work-tree=out checkout feeds -- data 2>/dev/null || cp data/*.json out/ 2>/dev/null || true
+          if [ -d out/data ]; then mv out/data/*.json out/ && rmdir out/data; fi
+          ls out
+
+      - name: Fetch feeds
+        run: python -I scripts/fetch_feeds.py india.json out
+
+      - name: Publish to feeds branch
+        run: |
+          mkdir -p /tmp/pub/data
+          cp out/*.json /tmp/pub/data/
+          cd /tmp/pub
+          git init -q -b feeds
+          git config user.name "drishti-bot"
+          git config user.email "drishti-bot@users.noreply.github.com"
+          git add data
+          git commit -q -m "Feeds $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" feeds
