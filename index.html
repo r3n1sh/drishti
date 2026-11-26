@@ -60,7 +60,7 @@ button{cursor:pointer}
 .iconbtn:hover{border-color:var(--accent)}
 
 /* stage */
-.stage{position:relative;height:calc(100svh - 55px - env(safe-area-inset-top,0px));min-height:600px;background:var(--ocean);overflow:hidden;border-bottom:1px solid var(--line)}
+.stage{position:relative;height:calc(100svh - 89px - env(safe-area-inset-top,0px));min-height:600px;background:var(--ocean);overflow:hidden;border-bottom:1px solid var(--line)}
 #map{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #map .st{stroke:var(--st-line);stroke-width:.8;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .5s}
 #map .st:hover{filter:brightness(1.18)}
@@ -93,7 +93,7 @@ button{cursor:pointer}
 .gchip .bar{height:3px;border-radius:2px;background:var(--surface-2);overflow:hidden}
 .gchip .bar i{display:block;height:100%}
 
-.ov-layers{top:96px;right:max(12px,env(safe-area-inset-right,0px));width:236px;padding:12px;display:grid;gap:12px;max-height:calc(100% - 330px);overflow:auto}
+.ov-layers{top:96px;right:max(12px,env(safe-area-inset-right,0px));width:236px;padding:12px;display:grid;gap:12px;max-height:calc(100% - 270px);overflow:auto}
 .ov-layers h3{margin:0;font-family:var(--f-display);font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .seg button,.chorobtn{background:transparent;border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:12px;color:var(--muted);text-align:left}
@@ -109,7 +109,7 @@ button{cursor:pointer}
 [hidden]{display:none!important}
 .pulsebox,.gchip{position:relative}
 
-.ov-legend{right:max(12px,env(safe-area-inset-right,0px));bottom:110px;padding:9px 12px;display:grid;gap:6px;max-width:min(420px,calc(100% - 430px));min-width:220px}
+.ov-legend{right:max(12px,env(safe-area-inset-right,0px));bottom:72px;padding:9px 12px;display:grid;gap:6px;max-width:min(420px,calc(100% - 430px));min-width:220px}
 .legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
 .legend .sw{display:flex;gap:1px}
 .legend .sw span{display:inline-block;height:9px;width:20px;font-size:0}
@@ -117,18 +117,18 @@ button{cursor:pointer}
 .legend .k span{display:inline-flex;align-items:center;gap:4px}
 .legend .k i{width:10px;height:10px;border-radius:2px;display:inline-block}
 
-.ov-zoom{left:404px;bottom:110px;display:grid;padding:3px;gap:3px}
+.ov-zoom{left:404px;bottom:72px;display:grid;padding:3px;gap:3px}
 .ov-zoom button{width:32px;height:32px;border-radius:8px;border:0;background:transparent;font-size:16px;font-weight:600}
 .ov-zoom button:hover{background:var(--surface-2)}
-.ov-coord{left:450px;bottom:110px;padding:5px 9px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.ov-coord{left:450px;bottom:72px;padding:5px 9px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
 
-.drawer{position:absolute;z-index:6;top:12px;left:max(12px,env(safe-area-inset-left,0px));bottom:52px;width:380px;display:flex;flex-direction:column;overflow:hidden}
+.drawer{position:absolute;z-index:6;top:12px;left:max(12px,env(safe-area-inset-left,0px));bottom:12px;width:380px;display:flex;flex-direction:column;overflow:hidden}
 .tabs{display:flex;border-bottom:1px solid var(--line);flex:none;overflow-x:auto;scrollbar-width:none}
 .tabs button{flex:1 0 auto;background:none;border:0;padding:10px 7px;font-size:11.5px;white-space:nowrap;font-weight:600;color:var(--muted);border-bottom:2px solid transparent}
 .tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
 .tabpane{padding:14px;overflow:auto;flex:1;min-height:0}
 
-.ticker{position:absolute;z-index:6;left:0;right:0;bottom:0;height:40px;background:var(--surface);border-top:1px solid var(--line);display:flex;align-items:center;overflow:hidden}
+.ticker{position:relative;height:34px;background:var(--surface-2);border-bottom:1px solid var(--line);display:flex;align-items:center;overflow:hidden}
 .ticker .tag{position:relative;z-index:2;flex:none;height:100%;display:flex;align-items:center;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:12px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
 .ticker .run{display:flex;gap:34px;white-space:nowrap;animation:run 140s linear infinite;padding-left:24px}
 .ticker:hover .run{animation-play-state:paused}
@@ -137,7 +137,7 @@ button{cursor:pointer}
 .ticker .run i{width:7px;height:7px;border-radius:50%;display:inline-block}
 @keyframes run{to{transform:translateX(-50%)}}
 
-.ov-time{left:404px;right:max(12px,env(safe-area-inset-right,0px));bottom:50px;display:flex;align-items:center;gap:12px;padding:8px 12px}
+.ov-time{left:404px;right:max(12px,env(safe-area-inset-right,0px));bottom:12px;display:flex;align-items:center;gap:12px;padding:8px 12px}
 .ov-time button{width:34px;height:34px;flex:none;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:13px;font-weight:700}
 .ov-time button:disabled{background:var(--surface-2);color:var(--faint);cursor:not-allowed}
 .ov-time input{flex:1;min-width:0;accent-color:var(--accent)}
@@ -270,7 +270,7 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
 .sch{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:5px;align-content:start}
 #schNews{max-height:600px;overflow:auto}
 @media (max-width:760px){.wgrid,.schgrid{grid-template-columns:1fr}}
-.toast{position:fixed;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));top:calc(70px + env(safe-area-inset-top,0px));background:var(--fg);color:var(--bg);padding:8px 13px;border-radius:10px;font-size:12.5px;z-index:40}
+.toast{position:fixed;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));top:calc(104px + env(safe-area-inset-top,0px));background:var(--fg);color:var(--bg);padding:8px 13px;border-radius:10px;font-size:12.5px;z-index:40}
 
 @media (max-width:1100px){.ov-top .gchip:nth-child(n+5){display:none}}
 @media (max-width:900px){
@@ -282,7 +282,7 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
   .ov-layers{top:76px;width:210px;max-height:calc(100% - 140px)}
   .ov-layers.closed .collapse-body{display:none}
   .collapse{display:inline-block}
-  .ov-zoom{left:12px;bottom:110px}.ov-coord{display:none}.ov-time{left:12px;right:12px}.ov-time .tl{width:120px}.ov-time .tl span{display:none}
+  .ov-zoom{left:12px;bottom:72px}.ov-coord{display:none}.ov-time{left:12px;right:12px}.ov-time .tl{width:120px}.ov-time .tl span{display:none}
   .ov-legend{right:12px;max-width:calc(100% - 70px);min-width:0}
   .span2{grid-column:auto}.panels{grid-template-columns:1fr}.form{grid-template-columns:1fr 1fr}
 }
@@ -293,6 +293,7 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
 </head>
 <body>
 <header class="top">
+  <div class="ticker" aria-label="Latest signals"><span class="tag">Live wire</span><div class="run" id="ticker"></div></div>
   <div class="top-in">
     <div class="brand"><span class="deva" aria-hidden="true">दृष्टि</span><b>Drishti</b><small>India situation desk</small></div>
     <span class="pill" id="feedPill" title="Connecting to live feeds"><span class="led"></span><span id="feedTxt">Connecting…</span></span>
@@ -336,7 +337,6 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
       <input type="range" id="slider" min="0" max="71" step="1" value="71" disabled>
       <div class="tl"><b id="tlabel">Now</b><span id="tsub">Time travel needs live data</span></div>
     </div>
-    <div class="ticker" aria-label="Latest signals"><span class="tag">Live wire</span><div class="run" id="ticker"></div></div>
   </div>
 
   <aside class="ov drawer" id="drawer">
@@ -582,7 +582,7 @@ Promise.all([d3.json("india.json"),d3.json("nb.json")]).then(function(res){
 }).catch(function(e){$("#loading").textContent="The map data could not load. Reload the page to try again.";console.error(e)});
 
 function size(){var b=$("#mapbox").getBoundingClientRect();W=Math.max(320,b.width);H=Math.max(320,b.height);svg.attr("viewBox","0 0 "+W+" "+H)}
-function fitPad(){var wide=W>900;return {l:wide?410:14,r:wide?260:14,t:wide?96:70,b:52}}
+function fitPad(){var wide=W>900;return {l:wide?410:14,r:wide?260:14,t:wide?96:70,b:70}}
 function build(){
   size();
   var pad=fitPad(),india={type:"FeatureCollection",features:statesF};
