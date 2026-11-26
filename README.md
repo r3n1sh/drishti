@@ -18,7 +18,7 @@ A map-first situation desk for India. Every state and district on one interactiv
 | Social pulse | Bluesky news accounts, Mastodon hashtags | hourly |
 | Government schemes | Curated list (`schemes.json`) + live scheme news | list: manual; news: hourly |
 
-Power grid, markets, rail/air, digital and agriculture panels still show **sample** data.
+Every reading on the site comes from these feeds; there is no sample or simulated data. District shading uses real point counts (fires, quakes) or the nearest tracked city (air, weather).
 
 ## How it works
 
@@ -38,6 +38,5 @@ python3 -m http.server 8000                          # open http://localhost:800
 ## Notes
 
 - Boundaries: [india-maps-data](https://github.com/udit-001/india-maps-data) (2019 states and districts), simplified. Neighbours: Natural Earth via world-atlas.
-- District values are modelled from state readings until district-level feeds are added.
 - Check source terms before commercial use: Open-Meteo requires a paid plan for commercial use; Google News and social posts are shown as headlines with links only.
 - X (Twitter) is not integrated; it needs a paid API key.

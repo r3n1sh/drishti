@@ -382,57 +382,19 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
       <div class="src">wire: Bluesky public news accounts · Mastodon hashtags</div>
     </div>
     <div class="card">
-      <div class="card-h"><div><h2>Frontier watch</h2><div class="sub">Land borders and maritime zone, 5-step readiness meter</div></div><span class="badge">Sample</span></div>
-      <ul class="list" id="frontiers"></ul>
-      <div class="src">wire: MEA · MoD/PIB · BSF/ITBP/AR releases · Indian Navy IFC-IOR</div>
-    </div>
-    <div class="card">
-      <div class="card-h"><div><h2>Seismic log</h2><div class="sub">Last 7 days, M ≥ 2.5, India and neighbourhood</div></div><span class="badge" data-feed="quakes">Sample</span></div>
+      <div class="card-h"><div><h2>Seismic log</h2><div class="sub">Last 7 days, M ≥ 2.5, India and neighbourhood</div></div><span class="badge" data-feed="quakes">Loading</span></div>
       <div class="tbl-wrap"><table id="quakes"><thead><tr><th>Time</th><th>Region</th><th class="n">Mag</th><th class="n">Depth km</th></tr></thead><tbody></tbody></table></div>
       <div class="src">wire: National Center for Seismology (NCS) · USGS</div>
     </div>
     <div class="card">
-      <div class="card-h"><div><h2>Air quality</h2><div class="sub">Worst cities at the selected hour, Indian NAQI bands</div></div><span class="badge" data-feed="air">Sample</span></div>
+      <div class="card-h"><div><h2>Air quality</h2><div class="sub">Worst cities at the selected hour, Indian NAQI bands</div></div><span class="badge" data-feed="air">Loading</span></div>
       <ul class="list" id="aqi"></ul>
       <div class="src">wire: CPCB CAAQMS · SAFAR · CAQM GRAP orders</div>
     </div>
     <div class="card">
-      <div class="card-h"><div><h2>Sky &amp; sea</h2><div class="sub">Temperature extremes, rain, cyclones and fires</div></div><span class="badge" data-feed="weather">Sample</span></div>
+      <div class="card-h"><div><h2>Sky &amp; sea</h2><div class="sub">Temperature extremes, rain, cyclones and fires</div></div><span class="badge" data-feed="weather">Loading</span></div>
       <ul class="list" id="weather"></ul>
       <div class="src">wire: IMD RSMC New Delhi · NASA FIRMS VIIRS · INCOIS</div>
-    </div>
-    <div class="card">
-      <div class="card-h"><div><h2>Markets</h2><div class="sub">Session snapshot with 30-session trend</div></div><span class="badge">Sample</span></div>
-      <div id="markets"></div>
-      <div class="src">wire: NSE · BSE · RBI reference rate · MCX · CCIL</div>
-    </div>
-    <div class="card">
-      <div class="card-h"><div><h2>Power grid</h2><div class="sub">All-India frequency, demand and regional load</div></div><span class="badge">Sample</span></div>
-      <div style="display:grid;gap:6px">
-        <div class="row"><div><span class="lbl">Frequency</span><div class="big2 num" id="hz">50.00</div></div><div style="text-align:right"><span class="lbl">Demand met</span><div class="big2 num" id="gw">--</div></div></div>
-        <div class="freq-scale" aria-hidden="true"><div class="needle" id="needle"></div></div>
-        <div class="freq-ticks"><span>49.80</span><span>49.90</span><span>50.00</span><span>50.05</span><span>50.20 Hz</span></div>
-      </div>
-      <div class="tbl-wrap" style="margin-top:12px"><table id="regions"><thead><tr><th>Region</th><th class="n">GW</th><th class="n">Δ y/y</th><th class="n">RE share</th></tr></thead><tbody></tbody></table></div>
-      <div class="src">wire: Grid-India · CEA daily report · IEX</div>
-    </div>
-    <div class="card">
-      <div class="card-h"><div><h2>Movement</h2><div class="sub">Rail punctuality by zone and metro airports</div></div><span class="badge">Sample</span></div>
-      <div class="tbl-wrap"><table id="rail"><thead><tr><th>Rail zone</th><th class="n">On time</th><th class="n">Late &gt;1h</th></tr></thead><tbody></tbody></table></div>
-      <div class="tbl-wrap" style="margin-top:12px"><table id="air"><thead><tr><th>Airport</th><th class="n">Moves</th><th class="n">Avg delay</th></tr></thead><tbody></tbody></table></div>
-      <div class="src">wire: NTES / CRIS · DGCA · AAI</div>
-    </div>
-    <div class="card">
-      <div class="card-h"><div><h2>Digital India</h2><div class="sub">Payment rails, advisories and outages</div></div><span class="badge">Sample</span></div>
-      <div class="kv" id="digital"></div>
-      <ul class="list" id="outages" style="margin-top:10px"></ul>
-      <div class="src">wire: NPCI · CERT-In · Downdetector IN · Cloudflare Radar (IN)</div>
-    </div>
-    <div class="card">
-      <div class="card-h"><div><h2>Fields &amp; mandis</h2><div class="sub">Rabi sowing vs normal, and kitchen staples</div></div><span class="badge">Sample</span></div>
-      <div id="sowing"></div>
-      <div class="tbl-wrap" style="margin-top:12px"><table id="mandi"><thead><tr><th>Commodity</th><th>Mandi</th><th class="n">₹/qtl</th><th class="n">w/w</th></tr></thead><tbody></tbody></table></div>
-      <div class="src">wire: Agriculture Ministry · Agmarknet · DoCA price monitoring</div>
     </div>
     <div class="card span2" id="schemesCard">
       <div class="card-h"><div><h2>Government schemes</h2><div class="sub">Major national schemes, state flagship schemes and the latest scheme news</div></div><span class="badge">Curated · Nov 2026</span></div>
@@ -454,11 +416,11 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
       <div id="rules" style="margin-top:8px"></div>
     </div>
     <div class="card span2">
-      <div class="card-h"><div><h2>Feeds this desk is built to take</h2><div class="sub">Live today: CAMS air via Open-Meteo, Open-Meteo weather, NASA FIRMS, USGS, GDACS, NDMA SACHET, RBI, PIB, Google News, GDELT, Bluesky and Mastodon. Below are the Indian sources the remaining sample panels are designed to read.</div></div></div>
+      <div class="card-h"><div><h2>Data sources</h2><div class="sub">Every reading on this page comes from these public feeds, refreshed hourly. Nothing is simulated.</div></div></div>
       <div class="srcgrid" id="sources"></div><div id="feedStatus" style="margin-top:12px"></div>
     </div>
   </section>
-  <p class="note">Live layers: air quality (CAMS model via Open-Meteo, converted to the Indian NAQI), weather (Open-Meteo), fires (NASA FIRMS VIIRS), earthquakes (USGS), cyclones (GDACS) and news signals (GDELT, Indian English-language press). They refresh hourly. Panels marked Sample still show illustrative values. State and district boundaries come from the open india-maps-data project (2019 boundaries) and are simplified for display; neighbouring countries are shown only for context.</p>
+  <p class="note">Live layers: air quality (CAMS model via Open-Meteo, converted to the Indian NAQI), weather (Open-Meteo), fires (NASA FIRMS VIIRS), earthquakes (USGS), cyclones (GDACS) and news signals (GDELT, Indian English-language press). They refresh hourly. State and district boundaries come from the open india-maps-data project (2019 boundaries) and are simplified for display; neighbouring countries are shown only for context.</p>
 </main>
 <div class="toast" id="toast" hidden></div>
 
@@ -532,14 +494,10 @@ var S=[
 var BY={},NAME2={};function norm(n){return n.toLowerCase().replace(/&/g,"and").replace(/[^a-z]/g,"")}
 S.forEach(function(s){BY[s.code]=s;NAME2[norm(s.name)]=s.code});
 
-/* ---------- sample layer data ---------- */
-var AQI={DL:368,HR:312,PB:248,UP:334,BR:286,RJ:198,CH:214,UK:142,HP:78,JK:121,LA:46,MP:176,GJ:158,MH:132,GA:64,KA:92,KL:48,TN:84,PY:71,AP:96,TG:118,OD:141,WB:212,JH:189,CG:151,SK:38,AR:31,AS:106,NL:54,ML:42,MN:63,MZ:29,TR:97,AN:26,LD:22,DH:118};
-var RAIN={TN:18,PY:24,AP:-12,KL:9,KA:-6,TG:-41,AN:32,LD:-15,GA:-70,MH:-88,GJ:-100,RJ:-100,PB:-96,HR:-100,DL:-100,CH:-95,UP:-92,BR:-85,JH:-74,WB:-58,OD:-22,CG:-80,MP:-94,JK:-35,LA:-60,HP:-52,UK:-66,SK:-40,AR:-12,AS:-28,NL:-31,ML:-19,MN:-44,MZ:-10,TR:-26,DH:-100};
-var FIRE={PB:412,HR:138,UP:207,MP:263,RJ:58,BR:21,CG:34,MH:46,OD:18,JH:12,GJ:15,TG:22,AP:19,KA:9,TN:6,WB:11,AS:7,MN:5,MZ:8,NL:4,AR:3,TR:2,ML:3,UK:6,HP:4,JK:3,DL:2,CH:1,KL:1,GA:0,SK:0,LA:0,AN:0,LD:0,PY:0,DH:0};
-var QUAKE={AS:6,MN:4,AR:5,UK:3,HP:2,JK:4,LA:3,MZ:2,NL:2,ML:1,SK:2,GJ:3,MH:1,AN:7,TR:1,BR:1};
+/* ---------- layer data (filled from live feeds) ---------- */
+var AQI={},RAIN={},FIRE={},QUAKE={};
 var STCAP={JK:[74.80,34.08],LA:[77.58,34.15],CH:[76.78,30.73],PB:[75.86,30.90],HP:[77.17,31.10],UK:[78.03,30.32],AR:[93.61,27.08],RJ:[75.79,26.91],HR:[76.6,29.1],DL:[77.21,28.61],UP:[80.95,26.85],BR:[85.14,25.59],SK:[88.61,27.33],AS:[91.74,26.14],NL:[94.11,25.67],GJ:[72.57,23.02],MP:[77.41,23.26],CG:[81.63,21.25],JH:[85.31,23.34],WB:[88.36,22.57],ML:[91.89,25.58],MN:[93.94,24.81],DH:[72.83,20.40],MH:[72.88,19.08],TG:[78.49,17.39],OD:[85.82,20.30],TR:[91.28,23.83],MZ:[92.72,23.73],GA:[73.83,15.49],KA:[77.59,12.97],AP:[80.65,16.51],AN:[92.73,11.62],LD:[72.64,10.57],KL:[76.94,8.52],TN:[80.27,13.08],PY:[79.81,11.94]};
-var HEAT={},COLD={};Object.keys(STCAP).forEach(function(c){var lat=STCAP[c][1],hill=["JK","LA","HP","UK","SK","AR"].indexOf(c)>-1;HEAT[c]=Math.round((hill?14:36-0.32*(lat-8))*10)/10;COLD[c]=Math.round((hill?-2:24-0.62*(lat-8))*10)/10});
-var POWER={};var r0=rng(91);S.forEach(function(s){POWER[s.code]=Math.round((1.5+r0()*8.5)*10)/10});POWER.DL=11.2;POWER.UP=9.4;POWER.TN=3.1;POWER.KL=2.4;POWER.PB=6.8;
+var HEAT={},COLD={};
 
 /* places [lon,lat] */
 var P={Delhi:[77.21,28.61],Ghaziabad:[77.44,28.67],Noida:[77.39,28.54],Gurugram:[77.03,28.46],Hapur:[77.78,28.73],Patna:[85.14,25.59],Ludhiana:[75.86,30.90],Kolkata:[88.36,22.57],Jaipur:[75.79,26.91],Mumbai:[72.88,19.08],Lucknow:[80.95,26.85],Chennai:[80.27,13.08],Bengaluru:[77.59,12.97],Hyderabad:[78.49,17.39],Ahmedabad:[72.57,23.02],Pune:[73.86,18.52],Muzaffarpur:[85.39,26.12],Amritsar:[74.87,31.63],Kanpur:[80.33,26.45],Varanasi:[82.97,25.32],Bhopal:[77.41,23.26],Guwahati:[91.74,26.14],Bhubaneswar:[85.82,20.30],Srinagar:[74.80,34.08],Leh:[77.58,34.15],Thiruvananthapuram:[76.94,8.52],Visakhapatnam:[83.22,17.69],Indore:[75.86,22.72],Kochi:[76.27,9.93],Imphal:[93.94,24.81],Shimla:[77.17,31.10],Dehradun:[78.03,30.32],Raipur:[81.63,21.25],Ranchi:[85.31,23.34],Nagpur:[79.09,21.15],Kandla:[70.22,23.03],Ratnagiri:[73.30,16.99],Nellore:[79.99,14.44],Rangpo:[88.53,27.18],Jakhau:[68.72,23.22],Nadia:[88.55,23.40],Kozhikode:[75.78,11.25],Sangrur:[75.84,30.25],SriVijayaPuram:[92.73,11.62],Agartala:[91.28,23.83]};
@@ -547,69 +505,17 @@ var P={Delhi:[77.21,28.61],Ghaziabad:[77.44,28.67],Noida:[77.39,28.54],Gurugram:
 /* signals: sev, domain, state, text, source, minutes ago, place */
 var DOM={security:"Security",weather:"Weather",quake:"Seismic",air:"Air",economy:"Economy",infra:"Infrastructure",cyber:"Digital",health:"Health"};
 var SEVC={1:"#46C287",2:"#E9C24A",3:"#F0803C",4:"#E5484D"};
-var EV=[
- [4,"air","DL","GRAP Stage III in force across NCR; construction and older petrol and diesel cars restricted","CAQM order",22,"Delhi"],
- [3,"air","PB","Stubble-fire count crosses 400 in 24 h; Sangrur, Ferozepur, Bathinda lead","NASA FIRMS",48,"Sangrur"],
- [3,"weather","TN","Heavy to very heavy rain likely over coastal Tamil Nadu and Puducherry for 48 h","IMD Chennai",65,"Chennai"],
- [3,"weather","AN","Low-pressure area over south Andaman Sea; likely to become a depression in 36 h","IMD RSMC",80,"SriVijayaPuram"],
- [2,"quake","AN","M4.3 earthquake, Andaman Sea, depth 35 km; no tsunami threat","NCS · INCOIS",95,null,[94.0,11.8]],
- [2,"quake","AS","M3.6 earthquake near Sonitpur; felt in Tezpur","NCS",130,null,[92.8,26.7]],
- [3,"infra","UP","Dense fog: 46 trains on Northern Railway running 2 h+ late","NTES",140,"Kanpur"],
- [2,"infra","DL","Low-visibility CAT-IIIB operations at Delhi airport, 05:10–07:40","AAI",170,"Delhi"],
- [2,"economy","MH","Onion modal price at Lasalgaon up 9% week on week","Agmarknet",190,null,[74.23,20.15]],
- [1,"economy","MH","RBI reference rate fixed; rupee steady in narrow band","RBI",205,"Mumbai"],
- [3,"cyber","KA","CERT-In advisory: critical remote code flaw in a widely deployed VPN appliance","CERT-In",220,"Bengaluru"],
- [2,"cyber","MH","UPI success rate dipped to 98.1% for 25 min at one large issuer bank","NPCI",250,"Mumbai"],
- [2,"infra","WB","Grid frequency touched 49.88 Hz in eastern region after a unit trip","Grid-India",280,"Kolkata"],
- [1,"infra","SK","NH-10 reopened after landslide clearance near Rangpo","BRO",310,"Rangpo"],
- [2,"security","WB","BSF seizes contraband at Indo-Bangladesh border, Nadia sector","BSF",340,"Nadia"],
- [1,"security","MH","Coast Guard completes search and rescue off Ratnagiri; 11 fishers safe","ICG",360,"Ratnagiri"],
- [1,"security","KL","Indian Navy and partner navies begin scheduled exercise in Arabian Sea","Indian Navy",390,null,[72.5,10.5]],
- [2,"health","KL","District surveillance flags rise in fever cases; health dept issues advisory","State health dept",410,"Kozhikode"],
- [2,"health","DL","Hospitals report more respiratory OPD visits as AQI stays Very Poor","Hospital bulletin",430,"Delhi"],
- [1,"weather","HP","Light snowfall at higher reaches; Atal Tunnel open for daytime traffic","IMD Shimla",470,null,[77.14,32.4]],
- [2,"weather","JK","Cold wave in Kashmir valley; Srinagar at −2.1 °C","IMD Srinagar",500,"Srinagar"],
- [1,"economy","GJ","Kandla and Mundra cargo throughput up on month","Port authority",540,"Kandla"],
- [2,"air","BR","Patna and Muzaffarpur AQI in Poor band for third straight day","CPCB",580,"Patna"],
- [1,"infra","KA","Bengaluru metro extension trial run completed","BMRCL",620,"Bengaluru"],
- [2,"quake","UK","M3.1 earthquake, Chamoli district; no damage reported","NCS",660,null,[79.5,30.4]],
- [1,"economy","TG","Hyderabad data-centre capacity addition announced","State IT dept",700,"Hyderabad"],
- [2,"weather","OD","Fishermen advised not to venture into south Bay of Bengal from Thursday","IMD Bhubaneswar",760,"Bhubaneswar"],
- [1,"cyber","DL","Phishing campaign impersonating income-tax refund messages reported","CERT-In",820,"Delhi"]
-].map(function(e,i){return {id:i,sev:e[0],dom:e[1],st:e[2],t:e[3],src:e[4],ago:e[5],ll:e[7]||P[e[6]],isNew:false}});
-var EXTRA=[
- [2,"air","HR","Gurugram AQI climbs into Very Poor band at 17:00","CPCB","Gurugram"],
- [1,"quake","MN","M2.9 earthquake near Ukhrul","NCS",null,[94.36,25.05]],
- [2,"infra","RJ","Solar generation dips as haze thickens over western Rajasthan","Grid-India",null,[71.9,27.0]],
- [3,"weather","AP","Depression likely to cross south Andhra coast; red alert for Nellore","IMD","Nellore"],
- [1,"economy","KA","Bengaluru vegetable arrivals normalise after rain","APMC","Bengaluru"],
- [2,"cyber","TN","Brief outage at a telecom operator's data services in Chennai circle","Downdetector IN","Chennai"],
- [2,"security","GJ","Coast Guard intercepts boat off Jakhau; crew detained for questioning","ICG","Jakhau"],
- [1,"health","MH","Pune municipal corporation starts winter vaccination drive","PMC","Pune"]
-];
-var QUAKES=[["03:42","Andaman Sea","AN",4.3,35,[94.0,11.8]],["22:18","Sonitpur, Assam","AS",3.6,18,[92.8,26.7]],["19:05","Chamoli, Uttarakhand","UK",3.1,10,[79.5,30.4]],["14:51","Ukhrul, Manipur","MN",2.9,52,[94.36,25.05]],["11:27","Kutch, Gujarat","GJ",3.0,14,[70.3,23.6]],["08:36","Kargil, Ladakh","LA",3.4,10,[76.13,34.56]],["01:12","Doda, J&K","JK",2.8,8,[75.55,33.15]],["20:44","West Kameng, Arunachal","AR",3.2,25,[92.4,27.3]],["16:09","Nicobar Islands","AN",4.0,44,[93.6,7.6]],["13:30","Hindu Kush, Afghanistan","—",4.6,190,[70.9,36.5]],["06:58","Western Nepal","—",3.9,15,[81.6,29.3]]];
-var AQS=[["Delhi","DL",368],["Ghaziabad","UP",352],["Noida","UP",341],["Gurugram","HR",312],["Hapur","UP",306],["Kanpur","UP",294],["Patna","BR",286],["Muzaffarpur","BR",271],["Ludhiana","PB",262],["Amritsar","PB",231],["Kolkata","WB",212],["Varanasi","UP",204],["Jaipur","RJ",198],["Ahmedabad","GJ",161],["Bhopal","MP",152],["Mumbai","MH",132],["Hyderabad","TG",118],["Guwahati","AS",106],["Bengaluru","KA",92],["Chennai","TN",84],["Kochi","KL",52],["Shimla","HP",61],["Srinagar","JK",121],["Bhubaneswar","OD",141],["Raipur","CG",151],["Ranchi","JH",189],["Pune","MH",118],["Lucknow","UP",318],["Thiruvananthapuram","KL",44],["Imphal","MN",63]];
-var AIRPORTS=[["DEL","Delhi",[77.10,28.56],1412,48],["BOM","Mumbai",[72.87,19.09],988,22],["BLR","Bengaluru",[77.71,13.20],742,11],["HYD","Hyderabad",[78.43,17.24],611,9],["MAA","Chennai",[80.17,12.99],522,26],["CCU","Kolkata",[88.45,22.65],438,17],["LKO","Lucknow",[80.89,26.76],182,54],["AMD","Ahmedabad",[72.63,23.07],264,14],["GAU","Guwahati",[91.59,26.11],118,19],["COK","Kochi",[76.39,10.15],196,8]];
-var FRONT=[["Line of Control","JK",2,"Ceasefire holding; routine patrolling and infiltration watch in Kupwara–Poonch belt",[74.3,34.0]],
- ["LAC · Western sector","LA",2,"Winter posture; disengaged friction points under periodic review",[78.9,34.3]],
- ["LAC · Middle sector","HP",1,"Passes closing for winter; low activity",[79.6,31.3]],
- ["LAC · Eastern sector","AR",2,"Infrastructure works ongoing on both sides; standard posture",[93.4,28.1]],
- ["Indo-Myanmar border","MN",3,"Free Movement Regime changes and fencing work; displacement flows monitored",[94.5,24.2]],
- ["Indo-Bangladesh border","WB",3,"Smuggling and cattle seizures up; fencing gaps in riverine stretches",[88.9,24.3]],
- ["Indo-Nepal open border","BR",1,"Open border; festival-season traffic normal",[84.6,27.3]],
- ["Indian Ocean Region","AN",2,"Research and survey vessels tracked near Andaman and Nicobar; normal shipping",[91.5,8.0]]];
-/* fire hotspots generated around clusters */
-var FIRES=[];(function(){var fr=rng(77);[[75.3,30.4,1.1,0.7,105],[76.3,29.5,0.8,0.6,35],[79.2,27.2,2.2,1.2,52],[77.6,23.4,2.4,1.4,66],[74.6,27.6,1.6,1.4,15],[81.8,21.3,1.3,1.3,9],[79.0,19.5,1.6,1.4,12],[85.0,25.9,1.2,0.5,6],[93.0,24.0,0.8,0.8,5]].forEach(function(c){
-  for(var i=0;i<c[4];i++){var a=fr()*Math.PI*2,r=Math.sqrt(fr());FIRES.push([c[0]+Math.cos(a)*r*c[2],c[1]+Math.sin(a)*r*c[3],fr()])}})})();
-var CYCLONE={now:[94.6,8.6],track:[[94.6,8.6],[91.8,9.9],[88.6,11.2],[85.0,12.6],[81.9,13.7],[79.9,14.4]]};
-var FOG=[[73.6,30.4],[76.5,31.0],[80.0,29.4],[84.0,27.8],[87.6,26.6],[88.4,25.6],[86.5,24.6],[82.6,25.0],[78.6,26.2],[75.6,28.1],[73.2,29.0]];
+var EV=[],EXTRA=[];
+var QUAKES=[];
+var AQS=[];
+var FIRES=[];
 
 /* ---------- layers ---------- */
 var CPCB=[[50,"#00B050","Good"],[100,"#92D050","Satisfactory"],[200,"#F2E205","Moderate"],[300,"#FF9900","Poor"],[400,"#FF2D2D","Very poor"],[9999,"#A80000","Severe"]];
 function hex(h){return [1,3,5].map(function(i){return parseInt(h.substr(i,2),16)})}
 function ramp(stops,t){t=Math.max(0,Math.min(1,t));var n=stops.length-1,i=Math.min(n-1,Math.floor(t*n)),f=t*n-i,a=hex(stops[i]),b=hex(stops[i+1]);return "rgb("+[0,1,2].map(function(k){return Math.round(a[k]+(b[k]-a[k])*f)}).join(",")+")"}
 function lum(c){var m=c.match(/\d+/g);return m?(0.299*m[0]+0.587*m[1]+0.114*m[2])/255:.5}
-function aqiBand(v){for(var i=0;i<CPCB.length;i++)if(v<=CPCB[i][0])return CPCB[i]}
+function aqiBand(v){if(v==null||isNaN(v)||!v)return [0,"#5C7A79","No reading"];for(var i=0;i<CPCB.length;i++)if(v<=CPCB[i][0])return CPCB[i]}
 function grad(stops,lo,hi){return '<span>'+lo+'</span><span class="sw">'+stops.map(function(c){return '<span style="background:'+c+'">.</span>'}).join("")+'</span><span>'+hi+'</span>'}
 var R_P=["#1F7A6F","#3FA98A","#E9C24A","#F0803C","#D8333B"],R_R=["#8A4B1F","#C9925A","#D9D2B8","#5DB5A4","#1D6F8C"],R_F=["#2E4442","#7B5B2A","#E39A2A","#E5532D","#B3121E"],R_Q=["#2A3E48","#4E5C8F","#8A5FB8","#C65AAE","#F05E8A"],R_W=["#1D3F4A","#2A7F8C","#7FC6A4","#E9C24A","#F0803C"];
 var LAYERS={
@@ -620,12 +526,11 @@ var LAYERS={
  quake:{name:"Seismic",unit:"",fmt:function(v){return Math.round(v)},max:7,color:function(v){return ramp(R_Q,v/7)},legend:function(){return grad(R_Q,"0","7+")},desc:"Earthquakes M ≥ 2.5, 7 days"},
  heat:{name:"Heat",unit:"°",fmt:function(v){return (+v).toFixed(0)},max:45,color:function(v){return ramp(["#2B4C7E","#3FA9C9","#9AD3A7","#F2D35B","#F0803C","#C4271E"],(v-10)/35)},legend:function(){return grad(["#2B4C7E","#3FA9C9","#9AD3A7","#F2D35B","#F0803C","#C4271E"],"10 °C","45 °C")},desc:"Today's maximum temperature"},
  cold:{name:"Cold",unit:"°",fmt:function(v){return (+v).toFixed(0)},max:30,color:function(v){return ramp(["#5B2A86","#3D5FB5","#4FA3C7","#BFE3E0","#E4E9E2"],(v+10)/35)},legend:function(){return grad(["#5B2A86","#3D5FB5","#4FA3C7","#BFE3E0","#E4E9E2"],"−10 °C","25 °C")},desc:"Today's minimum temperature"},
- power:{name:"Power",unit:"%",fmt:function(v){return "+"+(+v).toFixed(1)},max:12,color:function(v){return ramp(R_W,v/12)},legend:function(){return grad(R_W,"+0%","+12%")},desc:"Peak power demand vs last year"}
 };
 var PULSE={};
 function computePulse(){S.forEach(function(s){var c=s.code,sig=EV.filter(function(e){return e.st===c}).reduce(function(a,e){return a+e.sev},0);
-  PULSE[c]=Math.round(100*(0.34*Math.min(1,(AQI[c]||0)/400)+0.18*Math.min(1,Math.sqrt((FIRE[c]||0)/420))+0.14*Math.min(1,(QUAKE[c]||0)/7)+0.12*Math.min(1,(POWER[c]||0)/12)+0.22*Math.min(1,sig/8)))})}
-function val(layer,code){var m={aqi:AQI,rain:RAIN,fire:FIRE,quake:QUAKE,power:POWER,pulse:PULSE,heat:HEAT,cold:COLD}[layer];return (m&&m[code])||0}
+  PULSE[c]=Math.round(100*(0.38*Math.min(1,(AQI[c]||0)/400)+0.2*Math.min(1,Math.sqrt((FIRE[c]||0)/420))+0.16*Math.min(1,(QUAKE[c]||0)/7)+0.26*Math.min(1,sig/8)))})}
+function val(layer,code){var m={aqi:AQI,rain:RAIN,fire:FIRE,quake:QUAKE,pulse:PULSE,heat:HEAT,cold:COLD}[layer];return (m&&m[code])||0}
 function asc(layer){return layer==="cold"||(layer==="rain"&&!LIVE.rain)}
 function rankOf(layer,code){var v=val(layer,code);if(!v&&(layer==="fire"||layer==="quake"||layer==="rain"&&LIVE.rain))return "—";var arr=S.map(function(s){return val(layer,s.code)}).sort(function(a,b){return asc(layer)?a-b:b-a});return arr.indexOf(v)+1}
 var LIVE={},FEED={};
@@ -633,13 +538,14 @@ var RAIN_LIVE={name:"Rain 7 d",unit:" mm",fmt:function(v){return Math.round(v)},
 function level(v){return v>=70?["Acute","var(--crit)"]:v>=50?["High","var(--high)"]:v>=30?["Watch","var(--warn)"]:["Calm","var(--good)"]}
 /* district values derived from state value with seeded variation */
 var DV={};
-function dval(layer,d){var key=d.properties.dt_code+"|"+layer;if(DV[key]!=null)return DV[key];
-  var sc=d.properties.code,base=val(layer,sc),r=rng(+d.properties.dt_code*31+layer.length*7)(),v;
-  if(layer==="rain"&&!LIVE.rain)v=Math.max(-100,Math.min(60,base+(r-.5)*40));
-  else if(layer==="heat"||layer==="cold")v=base+(r-.5)*3.2;
-  else if(layer==="quake")v=base?Math.round(base*r*1.4):0;
-  else if(layer==="fire")v=base*(0.2+r*1.6)/Math.max(1,(d.properties.n||1))*3;
-  else v=base*(0.72+r*0.56);
+function dval(layer,d){var key=d.properties.dt_code+"|"+layer;if(DV[key]!=null)return DV[key];var v=0,sc=d.properties.code;
+  if(layer==="fire"||layer==="quake"){var b=d3.geoBounds(d),pts=layer==="fire"?FIRES.map(function(f){return [f[0],f[1]]}):QUAKES.map(function(q){return q[5]});
+    pts.forEach(function(p){if(p&&p[0]>=b[0][0]&&p[0]<=b[1][0]&&p[1]>=b[0][1]&&p[1]<=b[1][1]&&d3.geoContains(d,p))v++})}
+  else if(layer==="pulse")v=val("pulse",sc);
+  else{var c=d3.geoCentroid(d),src=layer==="aqi"?(FEED.air&&FEED.air.cities):(FEED.weather&&FEED.weather.cities);
+    if(src){var n=nearest(src,c,function(x){return x.ll});if(n){var x=n.x;
+      if(layer==="aqi")v=x.aqi[hIdx]||0;else{var w=FEED.weather,ti=Math.max(0,w.days.indexOf(w.today));
+        if(layer==="heat")v=x.tmax[ti];else if(layer==="cold")v=x.tmin[ti];else{v=0;for(var i=Math.max(0,ti-6);i<=ti;i++)v+=x.rain[i]||0}}}}}
   DV[key]=v;return v}
 
 /* ---------- state of the UI ---------- */
@@ -649,8 +555,6 @@ var OVL={signals:{name:"Signals",on:true,sym:'<svg width="12" height="12"><circl
  quakes:{name:"Earthquakes",on:true,sym:'<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="none" stroke="#C65AAE" stroke-width="1.5"/><circle cx="6" cy="6" r="2" fill="#C65AAE"/></svg>'},
  fires:{name:"Fire hotspots",on:true,sym:'<svg width="12" height="12"><circle cx="6" cy="6" r="2.5" fill="#FF7A1A"/></svg>'},
  air:{name:"AQI stations",on:false,sym:'<svg width="12" height="12"><rect x="2" y="2" width="8" height="8" rx="2" fill="#FF9900"/></svg>'},
- airports:{name:"Airports",on:false,sym:'<svg width="12" height="12"><path d="M6 1 L11 6 L6 11 L1 6Z" fill="#2FB6A8"/></svg>'},
- frontiers:{name:"Frontier sectors",on:true,sym:'<svg width="12" height="12"><path d="M6 1 L11 11 L1 11Z" fill="none" stroke="#E9C24A" stroke-width="1.5"/></svg>'},
  weather:{name:"Weather systems",on:true,sym:'<svg width="12" height="12"><path d="M1 6 h10" stroke="#F0803C" stroke-width="2" stroke-dasharray="3 2"/></svg>'},
  alerts:{name:"Official alerts",on:true,sym:'<svg width="12" height="12"><rect x="1.5" y="1.5" width="9" height="9" rx="1" fill="rgba(240,128,60,.35)" stroke="#F0803C" stroke-width="1.3"/></svg>'},
  world:{name:"World → India",on:true,sym:'<svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="rgba(47,182,168,.5)" stroke="#2FB6A8"/></svg>'},
@@ -704,9 +608,6 @@ function build(){
   gGeo.append("path").datum(borderMesh).attr("class","edge").attr("d",path).attr("filter","url(#glow)");
   gAl=gGeo.append("g");
   gWx=gGeo.append("g");
-  gWx.append("path").attr("class","fog").attr("d",ring(FOG));
-  gWx.append("path").attr("class","cone").attr("d",ring(coneShape(CYCLONE.track)));
-  gWx.append("path").datum({type:"LineString",coordinates:CYCLONE.track}).attr("class","track").attr("d",path);
   gPts=rootG.append("g");gLbl=rootG.append("g");
   zoom=d3.zoom().scaleExtent([1,14]).translateExtent([[-W,-H],[2*W,2*H]]).on("zoom",function(ev){T=ev.transform;gGeo.attr("transform",T);place();updateDetail()});
   svg.call(zoom).on("dblclick.zoom",null);
@@ -723,10 +624,10 @@ function coneShape(tr){var L=[],R=[];for(var i=0;i<tr.length;i++){var a=tr[Math.
 function pts(){var out=[];
   if(OVL.fires.on)FIRES.forEach(function(f){out.push({k:"fire",ll:[f[0],f[1]],w:f[2],frp:f[3],t:f[4]})});
   if(OVL.air.on)AQS.forEach(function(a){var ll=a[3]||P[a[0]];if(ll)out.push({k:"air",ll:ll,v:a[2],name:a[0],st:a[1]})});
-  if(OVL.airports.on)AIRPORTS.forEach(function(a){out.push({k:"apt",ll:a[2],code:a[0],name:a[1],mv:a[3],dl:a[4]})});
-  if(OVL.frontiers.on)FRONT.forEach(function(f){out.push({k:"front",ll:f[4],name:f[0],lv:f[2],txt:f[3],st:f[1]})});
+  if(false)[].forEach(function(a){out.push({k:"apt",ll:a[2],code:a[0],name:a[1],mv:a[3],dl:a[4]})});
+  if(false)[].forEach(function(f){out.push({k:"front",ll:f[4],name:f[0],lv:f[2],txt:f[3],st:f[1]})});
   if(OVL.quakes.on)QUAKES.forEach(function(q){out.push({k:"quake",ll:q[5],mag:q[3],name:q[1],time:q[0],depth:q[4],st:q[2]})});
-  if(OVL.weather.on){if(LIVE.cyclones)(FEED.cyclones.list||[]).forEach(function(c){out.push({k:"cyc",ll:c.ll,name:c.name,level:c.level,live:1})});else if(!LIVE.weather)out.push({k:"cyc",ll:CYCLONE.now});
+  if(OVL.weather.on){if(LIVE.cyclones)(FEED.cyclones.list||[]).forEach(function(c){out.push({k:"cyc",ll:c.ll,name:c.name,level:c.level,live:1})});
     RAINCELLS.forEach(function(c){out.push({k:"rain",ll:c.ll,name:c.n,today:c.today,wk:c.wk,tmr:c.tmr})})}
   if(OVL.places.on)PLACES.forEach(function(pl,i){out.push({k:"place",ll:pl.ll,name:pl.name,i:i})});
   if(OVL.signals.on)EV.forEach(function(e,i){if(e.ll)out.push({k:"sig",ll:jit(e.ll,i),e:e})});
@@ -748,7 +649,7 @@ function buildPoints(){
       g.append("circle").attr("r",r).attr("fill","rgba(198,90,174,.25)").attr("stroke","#C65AAE").attr("stroke-width",1.4);g.append("circle").attr("r",1.8).attr("fill","#F05E8A")}
     else if(d.k==="cyc"){g.append("circle").attr("class","halo").attr("r",16).attr("fill","none").attr("stroke","#F0803C").attr("stroke-width",1.5);
       g.append("path").attr("d","M0 -9 A9 9 0 0 1 9 0 M0 9 A9 9 0 0 1 -9 0").attr("fill","none").attr("stroke","#F0803C").attr("stroke-width",2.5);
-      g.append("circle").attr("r",3).attr("fill","#F0803C");g.append("text").attr("x",14).attr("y",4).attr("class","cityl").text(d.live?(d.name||"Cyclone")+" · "+(d.level||""):"LPA → depression · 36 h (sample)")}
+      g.append("circle").attr("r",3).attr("fill","#F0803C");g.append("text").attr("x",14).attr("y",4).attr("class","cityl").text((d.name||"Cyclone")+" · "+(d.level||""))}
     else if(d.k==="sig"){var col=SEVC[d.e.sev],rr=3+d.e.sev*1.1;if(d.e.sev>=3||d.e.isNew)g.append("circle").attr("class","halo").attr("r",rr*1.4).attr("fill",col).attr("opacity",.6);
       g.append("circle").attr("r",rr).attr("fill",col).attr("stroke","#06141A").attr("stroke-width",1.3)}
   });
@@ -785,7 +686,7 @@ function paint(){
     .attr("filter",function(f){return tripped[f.properties.code]?"url(#glow)":null});
   gDist.selectAll("path").attr("fill",function(d){return gran==="district"?L.color(dval(curLayer,d)):"transparent"})
     .classed("sel",function(d){return sel.dt&&d.properties.dt_code===sel.dt.properties.dt_code});
-  $("#legend").innerHTML='<span class="lbl">'+L.desc+(gran==="district"?" · by district (modelled)":"")+'</span><div class="legend">'+L.legend()+'</div>'+srcLine(curLayer);
+  $("#legend").innerHTML='<span class="lbl">'+L.desc+(gran==="district"?" · by district":"")+'</span><div class="legend">'+L.legend()+'</div>'+srcLine(curLayer);
   paintLabels();updateDetail();
 }
 function zoomTo(f,dur){var b=path.bounds(f),pad=fitPad(),bw=b[1][0]-b[0][0],bh=b[1][1]-b[0][1],aw=W-pad.l-pad.r,ah=H-pad.t-pad.b;
@@ -811,15 +712,15 @@ function ptTip(d){
   if(d.k==="air"){var b=aqiBand(d.v);return '<b>'+esc(d.name)+' · AQI '+d.v+'</b>'+b[2]}
   if(d.k==="apt")return '<b>'+d.code+' · '+esc(d.name)+'</b>'+inr.format(d.mv)+' movements today · avg delay '+d.dl+' min';
   if(d.k==="front")return '<b>'+esc(d.name)+' · level '+d.lv+'/5</b>'+esc(d.txt);
-  if(d.k==="cyc")return d.live?'<b>'+esc(d.name||"Tropical cyclone")+'</b>GDACS alert level: '+esc(d.level||"—"):'<b>Sample system</b>Illustrative low-pressure area and track';
+  if(d.k==="cyc")return d.live?'<b>'+esc(d.name||"Tropical cyclone")+'</b>GDACS alert level: '+esc(d.level||"—"):'';
   if(d.k==="rain")return '<b>'+esc(d.name)+' · '+d.today.toFixed(0)+' mm today</b>'+d.wk.toFixed(0)+' mm over 7 days · '+d.tmr.toFixed(0)+' mm forecast tomorrow';
   if(d.k==="place")return '<b>'+esc(d.name)+'</b>One of your places · open My places';
   if(d.k==="fire")return '<b>VIIRS fire hotspot</b>Confidence '+(d.w>.75?"high":d.w>.4?"nominal":"low")+(d.frp!=null?' · '+d.frp+' MW radiative power':'')+(d.t?'<br><span style="color:var(--muted)">'+d.t.replace("T"," ")+' IST</span>':'');return ""}
 
 /* ---------- layer console ---------- */
 function renderConsole(){
-  $("#choro").innerHTML=Object.keys(LAYERS).map(function(k){return '<button type="button" class="chorobtn" data-l="'+k+'" aria-pressed="'+(k===curLayer)+'" title="'+LAYERS[k].desc+(LIVE[k]?" · live":" · sample")+'">'+LAYERS[k].name+(LIVE[k]?'<span class="livedot" aria-label="live"></span>':'')+'</button>'}).join("");
-  $("#ovl").innerHTML=Object.keys(OVL).map(function(k){var o=OVL[k],n={signals:EV.length,quakes:QUAKES.length,fires:FIRES.length,air:AQS.length,airports:AIRPORTS.length,frontiers:FRONT.length,weather:(LIVE.weather?RAINCELLS.length+(LIVE.cyclones?FEED.cyclones.list.length:0):3),alerts:(FEED.alerts&&FEED.alerts.list?FEED.alerts.list.length:0),world:(FEED.world&&FEED.world.items?FEED.world.items.length:0),places:PLACES.length,cities:31}[k];
+  $("#choro").innerHTML=Object.keys(LAYERS).map(function(k){return '<button type="button" class="chorobtn" data-l="'+k+'" aria-pressed="'+(k===curLayer)+'" title="'+LAYERS[k].desc+(LIVE[k]?" · live":" · waiting for feed")+'">'+LAYERS[k].name+(LIVE[k]?'<span class="livedot" aria-label="live"></span>':'')+'</button>'}).join("");
+  $("#ovl").innerHTML=Object.keys(OVL).map(function(k){var o=OVL[k],n={signals:EV.length,quakes:QUAKES.length,fires:FIRES.length,air:AQS.length,weather:(LIVE.weather?RAINCELLS.length+(LIVE.cyclones?FEED.cyclones.list.length:0):3),alerts:(FEED.alerts&&FEED.alerts.list?FEED.alerts.list.length:0),world:(FEED.world&&FEED.world.items?FEED.world.items.length:0),places:PLACES.length,cities:31}[k];
     return '<label for="ov-'+k+'"><input type="checkbox" id="ov-'+k+'" data-o="'+k+'"'+(o.on?" checked":"")+'><span class="sym">'+o.sym+'</span>'+o.name+'<span class="ct">'+n+'</span></label>'}).join("");
 }
 $("#choro").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;curLayer=b.dataset.l;store("drishti-layer",curLayer);renderConsole();if(mapReady)paint();renderDossier()});
@@ -863,7 +764,7 @@ function renderDossier(){
   h+='<div class="dos-h"><div><span class="lbl">'+s.kind+' · '+s.region+'</span><div class="dos-name">'+esc(s.name)+'</div><div style="color:var(--muted);font-size:12px">Capital: '+esc(s.cap)+'</div></div><div class="dos-code">'+s.code+'</div></div>';
   h+='<div class="facts"><div class="fact"><span class="lbl">Pulse</span><b style="color:'+lv[1]+'">'+p+' · '+lv[0]+'</b></div><div class="fact"><span class="lbl">Population ’11</span><b>'+popFmt(s.pop)+'</b></div><div class="fact"><span class="lbl">Area</span><b>'+inr.format(s.area)+' km²</b></div>'
     +'<div class="fact"><span class="lbl">Density</span><b>'+inr.format(dens)+'/km²</b></div><div class="fact"><span class="lbl">Seismic zone</span><b>'+s.zone+'</b></div><div class="fact"><span class="lbl">AQI band</span><b>'+aqiBand(AQI[s.code])[2]+'</b></div></div>';
-  h+='<div class="metrics">'+["pulse","aqi","fire","quake","heat","cold","rain","power"].map(function(k){var LL=LAYERS[k],v=val(k,s.code),w=barW(k,v);
+  h+='<div class="metrics">'+["pulse","aqi","fire","quake","heat","cold","rain"].map(function(k){var LL=LAYERS[k],v=val(k,s.code),w=barW(k,v);
     return '<div class="metric"><span>'+LL.name+(LIVE[k]?'<span class="livedot"></span>':'')+' <span class="num" style="color:var(--muted)">'+LL.fmt(v)+LL.unit+'</span></span><div class="track"><i style="width:'+w+'%;background:'+LL.color(v)+'"></i></div><span class="rk">#'+rankOf(k,s.code)+'/36</span></div>'}).join("")+'</div>';
   h+='<div style="margin-top:10px"><button type="button" class="linkbtn" data-pin="st">☆ Pin '+esc(s.name)+' to My places</button></div>';
   if(SCH&&SCH.state[s.code])h+='<div class="sect"><span class="lbl">State flagship schemes</span><div class="chips">'+SCH.state[s.code].map(function(x){return '<button type="button" class="chip" data-sch="'+s.code+'">'+esc(x.n)+'</button>'}).join("")+'</div></div>';
@@ -907,43 +808,18 @@ setInterval(function(){if(!streaming)return;if(!LIVE.signals)EV.forEach(function
   renderStream()},12000);
 
 /* ---------- brief ---------- */
-function renderBrief(){if(LIVE.air||LIVE.weather||LIVE.fires){liveBrief();return}var C={h:["High","var(--good)"],m:["Moderate","var(--warn)"],l:["Low","var(--faint)"]};function c(k){return '<span class="conf" style="color:'+C[k][1]+'">'+C[k][0]+'</span>'}
-  $("#brief").innerHTML='<div class="lead">Air quality is the dominant national stressor this cycle: the Indo-Gangetic plain from Punjab to Bihar sits in Poor to Very Poor bands under a fog-and-stubble inversion, while the south watches a Bay of Bengal system.</div><ul>'
-  +'<li>'+c("h")+'NCR AQI is likely to stay above 300 for 48 h; low wind and continuing fires in Punjab and Haryana keep GRAP Stage III in place.</li>'
-  +'<li>'+c("m")+'The Andaman Sea low is likely to become a depression and track west-north-west; coastal Tamil Nadu, Puducherry and south Andhra face heavy rain from Thursday.</li>'
-  +'<li>'+c("h")+'Fog is the main transport risk: morning delays on Northern and East Central Railway, CAT-III operations at Delhi, Lucknow and Patna.</li>'
-  +'<li>'+c("m")+'Seismic activity is within normal range for the Andaman and north-east belts; nothing above M4.5 inside India.</li>'
-  +'<li>'+c("l")+'Onion and tomato arrivals are thin after unseasonal rain in Maharashtra and Karnataka; a further price rise is possible but not yet in arrivals data.</li>'
-  +'<li>'+c("m")+'Digital: one CERT-In critical advisory open; UPI success above 98% with one brief issuer-side dip.</li></ul>'}
-
+function renderBrief(){if(LIVE.air||LIVE.weather||LIVE.fires){liveBrief();return}$("#brief").innerHTML='<p class="note">The brief is written from the live feeds and appears once they load.</p>'}
 /* ---------- below-fold panels ---------- */
 function renderPanels(){
-  $("#frontiers").innerHTML=FRONT.map(function(f){var m="";for(var i=1;i<=5;i++)m+='<i style="background:'+(i<=f[2]?SEVC[Math.min(4,f[2]+1)]:"")+'"></i>';
-    return '<li><div class="row"><b class="nm">'+f[0]+'</b><span class="meter" aria-label="Level '+f[2]+' of 5">'+m+'</span></div><div style="font-size:12.5px;color:var(--muted)">'+f[3]+'</div></li>'}).join("");
   $("#quakes tbody").innerHTML=focusQ().map(function(q){var col=q[3]>=4?"var(--high)":q[3]>=3?"var(--warn)":"var(--muted)";return '<tr><td class="num">'+esc(q[0])+'</td><td>'+esc(q[1])+'</td><td class="n" style="color:'+col+';font-weight:600">'+q[3].toFixed(1)+'</td><td class="n">'+q[4]+'</td></tr>'}).join("");
   $("#aqi").innerHTML=AQS.filter(function(a){return !focus||a[1]===focus}).sort(function(a,b){return b[2]-a[2]}).slice(0,10).map(function(a){var b=aqiBand(a[2]);return '<li><div class="row"><span>'+a[0]+' <span style="color:var(--muted);font-size:12px">'+a[1]+'</span></span><span><span class="num" style="font-weight:600">'+a[2]+'</span> <span style="font-size:11.5px;color:var(--muted)">'+b[2]+'</span></span></div><div class="hbar"><i style="width:'+Math.min(100,a[2]/500*100)+'%;background:'+b[1]+'"></i></div></li>'}).join("");
-  var Wx=LIVE.weather?liveWx(focus):[["Low-pressure area · south Andaman Sea","Likely depression in 36 h, moving WNW toward Tamil Nadu–Andhra coast",3],["North-east monsoon","Active over coastal TN, Puducherry, south AP; season rain +11% vs normal",2],["Dense fog belt","Punjab to Bihar, visibility below 50 m in early morning",3],["Cold wave","Kashmir valley and Ladakh; Leh −9.4 °C",2],["Fire hotspots, 24 h","Punjab 412 · MP 263 · UP 207 · Haryana 138",3],["Western disturbance","Fresh WD reaches western Himalaya Saturday; snow at higher reaches",1]];
+  var Wx=LIVE.weather?liveWx(focus):[];
   $("#weather").innerHTML=Wx.map(function(w){return '<li style="grid-template-columns:4px 1fr;display:grid;gap:10px"><span style="border-radius:2px;background:'+SEVC[w[2]]+'"></span><span><b>'+esc(w[0])+'</b><div style="font-size:12.5px;color:var(--muted)">'+esc(w[1])+'</div></span></li>'}).join("");
-  function walk(seed,start,vol,n){var r=rng(seed),v=start,a=[];for(var i=0;i<n;i++){v=v*(1+(r()-.48)*vol);a.push(v)}return a}
-  function spark(a){var w=300,h=30,mn=Math.min.apply(null,a),mx=Math.max.apply(null,a),sx=w/(a.length-1),sy=function(v){return h-3-(v-mn)/(mx-mn||1)*(h-6)},pts=a.map(function(v,i){return (i*sx).toFixed(1)+","+sy(v).toFixed(1)}).join(" ");
-    return '<svg class="spark" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,'+h+' '+pts+' '+w+','+h+'" fill="currentColor" opacity=".12"/><polyline points="'+pts+'" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>'}
-  $("#markets").innerHTML=[["Nifty 50","pts",24800,.012,11,0],["Sensex","pts",81600,.011,12,0],["Bank Nifty","pts",53200,.014,13,0],["USD / INR","₹",86.4,.003,14,2],["Brent crude","$/bbl",71,.02,15,2],["MCX Gold","₹/10 g",96500,.009,16,0],["10-yr G-sec","%",6.38,.004,17,2]].map(function(m){var a=walk(m[4],m[2],m[3],30),l=a[29],p=a[28],ch=(l-p)/p*100;
-    return '<div class="mk"><span><b>'+m[0]+'</b> <span style="color:var(--muted);font-size:11.5px">'+m[1]+'</span></span><span class="p">'+(m[5]?inr2.format(l):inr.format(Math.round(l)))+'</span><span></span><span class="ch '+(ch>=0?"up":"dn")+'">'+(ch>=0?"▲ +":"▼ ")+ch.toFixed(2)+'%</span>'+spark(a)+'</div>'}).join("");
-  var Z=[["Northern","NR",58,41],["North Central","NCR",61,33],["East Central","ECR",64,29],["Eastern","ER",76,14],["Western","WR",88,5],["Central","CR",86,6],["Southern","SR",91,3],["South Central","SCR",89,4],["Northeast Frontier","NFR",79,9]];
-  $("#rail tbody").innerHTML=Z.map(function(z){var c=z[2]<65?"var(--crit)":z[2]<80?"var(--warn)":"var(--good)";return '<tr><td>'+z[0]+' <span style="color:var(--muted)">'+z[1]+'</span></td><td class="n" style="color:'+c+';font-weight:600">'+z[2]+'%</td><td class="n">'+z[3]+'</td></tr>'}).join("");
-  $("#air tbody").innerHTML=AIRPORTS.map(function(a){var c=a[4]>=40?"var(--crit)":a[4]>=20?"var(--warn)":"var(--good)";return '<tr><td>'+a[0]+' · '+a[1]+'</td><td class="n">'+inr.format(a[3])+'</td><td class="n" style="color:'+c+'">'+a[4]+' min</td></tr>'}).join("");
-  $("#digital").innerHTML='<div><span class="lbl">UPI success</span><b>98.6%</b></div><div><span class="lbl">UPI txns today</span><b>64.2 cr</b></div><div><span class="lbl">CERT-In open</span><b style="color:var(--high)">3</b></div><div><span class="lbl">Internet health</span><b style="color:var(--good)">Normal</b></div>';
-  $("#outages").innerHTML=[["Telecom data services · Chennai circle","32 min, resolved",2],["Issuer bank UPI declines · Mumbai","25 min, resolved",2],["State e-district portal · Bihar","Degraded, ongoing",3],["Regional internet suspension","None active this cycle",1]].map(function(o){return '<li><div class="row"><span class="nm">'+o[0]+'</span><span style="width:8px;height:8px;border-radius:50%;flex:none;background:'+SEVC[o[2]]+'"></span></div><div style="font-size:12px;color:var(--muted)">'+o[1]+'</div></li>'}).join("");
-  $("#sowing").innerHTML='<span class="lbl">Rabi sowing, lakh ha · actual vs normal to date</span>'+[["Wheat",182,198],["Pulses",84,92],["Rapeseed & mustard",74,71],["Rabi rice",6,9]].map(function(c){var p=c[1]/c[2]*100;return '<div style="margin-top:9px"><div class="row" style="font-size:12.5px"><span>'+c[0]+'</span><span class="num">'+c[1]+' / '+c[2]+' <span class="'+(p>=100?"up":"dn")+'">'+Math.round(p)+'%</span></span></div><div class="hbar" style="height:8px"><i style="width:'+Math.min(100,p)+'%;background:var(--peacock)"></i></div></div>'}).join("");
-  $("#mandi tbody").innerHTML=[["Onion","Lasalgaon, MH",2840,9.1],["Tomato","Kolar, KA",1960,14.2],["Potato","Agra, UP",1320,-3.4],["Wheat","Indore, MP",2610,0.8],["Mustard","Bharatpur, RJ",6120,1.9]].map(function(m){return '<tr><td>'+m[0]+'</td><td style="color:var(--muted)">'+m[1]+'</td><td class="n">'+inr.format(m[2])+'</td><td class="n '+(m[3]>=0?"dn":"up")+'">'+(m[3]>=0?"+":"")+m[3].toFixed(1)+'%</td></tr>'}).join("");
-  $("#sources").innerHTML=[["IMD & RSMC New Delhi","Warnings, cyclone bulletins, district nowcasts, rainfall departures"],["CPCB CAAQMS","Hourly AQI from 500+ stations; CAQM GRAP orders"],["National Center for Seismology","Earthquake catalogue for India and region"],["NASA FIRMS","VIIRS and MODIS fire hotspots"],["Grid-India","Frequency, demand met, regional load, renewables"],["NSE · BSE · RBI · MCX · CCIL","Indices, reference rate, commodities, G-sec yields"],["NTES / CRIS · AAI · DGCA","Train running status, airport movements, delays"],["NPCI · CERT-In","UPI volumes and success rates; security advisories"],["Agmarknet · Agriculture Ministry","Mandi arrivals and prices; weekly sowing bulletin"],["PIB · MEA · MoD","Official releases for security and foreign-affairs signals"],["INCOIS","Tsunami early warning and ocean state"],["Census 2011 · BIS IS 1893","Population base and seismic zoning in dossiers"]].map(function(x){return '<div><b>'+x[0]+'</b><p>'+x[1]+'</p></div>'}).join("");
+  if(!$("#quakes tbody").innerHTML)$("#quakes tbody").innerHTML='<tr><td colspan="4" style="color:var(--muted)">'+(LIVE.quakes?"No earthquakes in this view.":"Waiting for the earthquake feed.")+'</td></tr>';
+  if(!$("#aqi").innerHTML)$("#aqi").innerHTML='<li><span class="note">'+(LIVE.aqi?"No tracked city in this view.":"Waiting for the air feed.")+'</span></li>';
+  if(!$("#weather").innerHTML)$("#weather").innerHTML='<li><span class="note">Waiting for the weather feed.</span></li>';
+  $("#sources").innerHTML=[["Air quality","CAMS atmospheric model via Open-Meteo, converted to the Indian National AQI"],["Weather","Open-Meteo forecast and 7-day history for 80+ cities"],["Fire hotspots","NASA FIRMS VIIRS (NOAA-20, NOAA-21, Suomi NPP)"],["Earthquakes","USGS FDSN event service, M 2.5+"],["Cyclones","GDACS tropical cyclone alerts"],["Official alerts","NDMA SACHET common alerting protocol: IMD, state disaster authorities, CWC, INCOIS"],["Official releases","RBI press releases, PIB"],["Press signals","Google News RSS and GDELT"],["World → India","Google News, international stories mentioning India"],["Social pulse","Bluesky news accounts, Mastodon hashtags"],["Schemes","Curated national and state list; scheme news from Google News"],["Boundaries and facts","india-maps-data (2019), Census 2011, BIS IS 1893 seismic zones"]].map(function(x){return '<div><b>'+x[0]+'</b><p>'+x[1]+'</p></div>'}).join("");
 }
-var hzR=rng(5);
-function renderGrid(){var hz=49.95+hzR()*0.11;$("#hz").textContent=hz.toFixed(2);$("#needle").style.left="calc("+Math.max(0,Math.min(100,(hz-49.8)/0.4*100))+"% - 1px)";
-  var R=[["Northern","NR",62.4,8.1,24],["Western","WR",68.9,5.3,31],["Southern","SR",58.2,3.9,38],["Eastern","ER",27.6,6.7,9],["North-Eastern","NER",3.4,7.2,14]];
-  $("#gw").textContent=R.reduce(function(a,r){return a+r[2]},0).toFixed(1)+" GW";
-  $("#regions tbody").innerHTML=R.map(function(r){return '<tr><td>'+r[0]+' <span style="color:var(--muted)">'+r[1]+'</span></td><td class="n">'+r[2].toFixed(1)+'</td><td class="n up">+'+r[3].toFixed(1)+'%</td><td class="n">'+r[4]+'%</td></tr>'}).join("")}
-setInterval(function(){if(streaming)renderGrid()},4000);
 
 /* ---------- rules ---------- */
 var RULES=store("drishti-rules");if(!Array.isArray(RULES))RULES=[{l:"aqi",s:"ALL",op:"gt",v:300,ex:1},{l:"fire",s:"PB",op:"gt",v:250,ex:1},{l:"quake",s:"ALL",op:"gt",v:4,ex:1}];
@@ -968,17 +844,17 @@ var FEEDSRC={aqi:"air",heat:"weather",cold:"weather",rain:"weather",fire:"fires"
 function hhmm(s){return s?s.slice(11,16):"—"}
 function istDate(s){return new Date(s+":00+05:30")}
 function srcLine(layer){var f=FEEDSRC[layer];
-  if(layer==="pulse")return '<div class="src-line"><i style="background:'+(LIVE.aqi?"var(--good)":"var(--faint)")+'"></i>Composite of the live layers'+(LIVE.aqi?"":" (sample)")+'; power demand is sample</div>';
+  if(layer==="pulse")return '<div class="src-line"><i style="background:'+(LIVE.aqi?"var(--good)":"var(--faint)")+'"></i>Composite of air, fires, quakes and signal load</div>';
   if(f&&FEED[f]&&LIVE[layer])return '<div class="src-line"><i style="background:var(--good)"></i>Live · '+esc(FEED[f].src||f)+' · updated '+hhmm(FEED[f].at)+' IST</div>';
-  return '<div class="src-line"><i style="background:var(--faint)"></i>Sample data, not a live reading</div>'}
+  return '<div class="src-line"><i style="background:var(--faint)"></i>Waiting for this feed</div>'}
 function wxVis(){if(!gWx)return;gWx.style("display",OVL.weather.on&&!LIVE.weather?null:"none")}
 function setBadges(){document.querySelectorAll(".badge[data-feed2]").forEach(function(b){var f=FEED[b.dataset.feed2];b.textContent=f?"Live · "+hhmm(f.at):"Waiting";b.classList.toggle("live",!!f)});document.querySelectorAll(".badge[data-feed]").forEach(function(b){var f=b.dataset.feed,ok=FEED[f]&&LIVE[{air:"aqi",weather:"heat",quakes:"quake"}[f]];
-  b.textContent=ok?"Live · "+hhmm(FEED[f].at):"Sample";b.classList.toggle("live",!!ok)});
+  b.textContent=ok?"Live · "+hhmm(FEED[f].at):"Loading";b.classList.toggle("live",!!ok)});
   var m=FEED.meta,okn=0,tot=0;if(m&&m.feeds){Object.keys(m.feeds).forEach(function(k){tot++;if(m.feeds[k].ok&&!m.feeds[k].stale)okn++})}
   if(m&&tot){$("#feedTxt").textContent="Live · "+hhmm(m.updated)+" IST";$("#feedPill").title=okn+" of "+tot+" feeds fresh at last refresh";
     $("#feedStatus").innerHTML='<span class="lbl">Feed status · last refresh '+esc(m.updated.replace("T"," "))+' IST</span><div class="chips" style="margin-top:6px">'+Object.keys(m.feeds).map(function(k){var x=m.feeds[k];return '<span class="chip" style="border-color:'+(x.ok&&!x.stale?"var(--good)":"var(--warn)")+'">'+esc(k)+' · '+(x.ok&&!x.stale?"fresh":"kept previous")+'</span>'}).join("")+'</div>'}
 }
-function noLive(msg){$("#feedTxt").textContent=msg;$("#feedPill").title="Showing sample data"}
+function noLive(msg){$("#feedTxt").textContent=msg;$("#feedPill").title="Live feeds could not be loaded"}
 var FEED_KEYS=["meta","air","weather","fires","quakes","cyclones","news","alerts","official","world","social","schemenews"],lastUpdated=null;
 /* Live data: the hourly GitHub Action force-pushes fresh JSON to the "feeds" branch; the copy in /data is a fallback snapshot. */
 var DATA_BASES=["https://raw.githubusercontent.com/r3n1sh/drishti/feeds/data/","data/"],DATA_BASE=DATA_BASES[0];
@@ -987,7 +863,7 @@ function connectFeeds(){
       .then(function(r){if(!r.ok){if(DATA_BASE!==DATA_BASES[1]){DATA_BASE=DATA_BASES[1];return fetch(DATA_BASE+"meta.json?t="+Date.now(),{cache:"no-store"})}throw 0}return r}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(m){
       if(!first&&m.updated===lastUpdated)return;lastUpdated=m.updated;FEED.meta=m;queueApply("meta");
       FEED_KEYS.slice(1).forEach(function(k){fetch(DATA_BASE+k+".json?v="+encodeURIComponent(m.updated),{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(d){if(d){FEED[k]=d;queueApply(k)}}).catch(function(){})})})
-    .catch(function(){if(first)noLive("Sample data")})}
+    .catch(function(){if(first)noLive("Feeds unavailable")})}
   load(true);setInterval(function(){load(false)},5*60*1000);
 }
 var qa,newsDirty=false;
@@ -1137,7 +1013,7 @@ function liveWx(fc){var w=FEED.weather,ti=w.days.indexOf(w.today);if(ti<0)ti=7;v
   else if(LIVE.fires){var top=S.slice().sort(function(a,b){return FIRE[b.code]-FIRE[a.code]}).slice(0,4);out.push(["Fire hotspots, 24 h",FIRES.length+" in India · "+top.map(function(s){return s.code+" "+FIRE[s.code]}).join(" · "),FIRES.length>800?3:2])}
   return out}
 function liveBrief(){
-  var C={o:["Observed","var(--good)"],m:["Modelled","var(--warn)"],f:["Forecast","var(--peacock)"],s:["Sample","var(--faint)"]};function c(k){return '<span class="conf" style="color:'+C[k][1]+'">'+C[k][0]+'</span>'}
+  var C={o:["Observed","var(--good)"],m:["Modelled","var(--warn)"],f:["Forecast","var(--peacock)"]};function c(k){return '<span class="conf" style="color:'+C[k][1]+'">'+C[k][0]+'</span>'}
   var li=[],lead="";
   if(LIVE.aqi){var cs=AQS.slice().sort(function(a,b){return b[2]-a[2]}),bad=cs.filter(function(x){return x[2]>200}),b=aqiBand(cs[0][2]);
     lead="Worst air at this hour is in "+cs[0][0]+" (AQI "+cs[0][2]+", "+b[2]+"). "+bad.length+" of "+cs.length+" tracked cities are in the Poor band or worse"+(bad.length?", led by "+bad.slice(0,4).map(function(x){return x[0]}).join(", "):"")+".";
@@ -1146,7 +1022,6 @@ function liveBrief(){
   if(LIVE.quakes){var qs=QUAKES.slice().sort(function(a,b){return b[3]-a[3]});li.push(c("o")+(qs.length?qs.length+" earthquakes of M2.5+ in the region over 7 days; largest M"+(+qs[0][3]).toFixed(1)+", "+qs[0][1]+".":"No M2.5+ earthquakes recorded in the region in 7 days."))}
   if(LIVE.weather){liveWx(null).forEach(function(x){if(/rain|Cold|Hot|cyclone/i.test(x[0]))li.push(c(/tomorrow/.test(x[0])?"f":"o")+x[0]+": "+x[1]+".")})}
   if(LIVE.signals){var dc={};EV.forEach(function(e){dc[e.dom]=(dc[e.dom]||0)+1});var top=Object.keys(dc).sort(function(a,b){return dc[b]-dc[a]}).slice(0,3);li.push(c("o")+EV.length+" located news signals in 24 h; most are about "+top.map(function(d){return DOM[d].toLowerCase()+" ("+dc[d]+")"}).join(", ")+".")}
-  li.push(c("s")+"Power, markets, rail, digital and agriculture panels still show sample values.");
   $("#brief").innerHTML='<div class="lead">'+esc(lead||"Live feeds loaded.")+'</div><ul>'+li.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><p class="note">Generated from the live feeds at '+(HOURS?esc(HOURS[hIdx].replace("T"," ")):"—")+' IST. Rule-based, no AI.</p>'}
 /* places */
 function hav(a,b){var R=6371,dl=(b[1]-a[1])*Math.PI/180,dn=(b[0]-a[0])*Math.PI/180,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[1]*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.sqrt(x))}
@@ -1181,7 +1056,7 @@ function flyTo(ll,k){if(!mapReady)return;var p=proj(ll),pad=fitPad();svg.transit
 var CMP=[null,null];
 function renderCompare(){var a=CMP[0]||sel.st,b=CMP[1]||(a==="KL"?"DL":"KL");CMP=[a,b];
   var opts=function(v){return S.slice().sort(function(x,y){return x.name<y.name?-1:1}).map(function(s){return '<option value="'+s.code+'"'+(s.code===v?" selected":"")+'>'+esc(s.name)+'</option>'}).join("")};
-  var rows=[["Pulse","pulse"],["Air (AQI)","aqi"],["Fires 24 h","fire"],["Quakes 7 d","quake"],["Max temp","heat"],["Min temp","cold"],[LAYERS.rain.name,"rain"],["Power y/y","power"]];
+  var rows=[["Pulse","pulse"],["Air (AQI)","aqi"],["Fires 24 h","fire"],["Quakes 7 d","quake"],["Max temp","heat"],["Min temp","cold"],[LAYERS.rain.name,"rain"]];
   var h='<span class="lbl">Compare two states or UTs</span><div class="addrow"><label for="cmpA" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">First</label><select id="cmpA">'+opts(a)+'</select><label for="cmpB" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Second</label><select id="cmpB">'+opts(b)+'</select></div>';
   h+='<table class="cmp" style="margin-top:10px"><thead><tr><th></th><th class="n">'+a+'</th><th class="n">'+b+'</th></tr></thead><tbody>';
   function num(x){return typeof x==="number"?x:parseFloat(x)}
@@ -1205,7 +1080,7 @@ document.addEventListener("keydown",function(e){var tg=e.target.tagName;if(tg===
   else if(e.key==="d"||e.key==="D"){var b=document.querySelector('#gran button[data-g="'+(gran==="state"?"district":"state")+'"]');if(b)b.click()}});
 
 /* boot */
-computePulse();renderConsole();renderTop();renderDossier();renderFilters();renderStream();renderBrief();renderPanels();renderGrid();initRuleForm();evalRules();
+computePulse();renderConsole();renderTop();renderDossier();renderFilters();renderStream();renderBrief();renderPanels();initRuleForm();evalRules();
 renderWorld();renderSocial();renderSchemes();readHash();setBadges();connectFeeds();
 })();
 </script>
