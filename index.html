@@ -83,7 +83,7 @@ button{cursor:pointer}
 .loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px}
 
 .ov{position:absolute;z-index:5;background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px}
-.ov-top{top:12px;left:max(12px,env(safe-area-inset-left,0px));right:404px;display:flex;gap:8px;flex-wrap:wrap;background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none}
+.ov-top{top:12px;left:404px;right:max(12px,env(safe-area-inset-right,0px));display:flex;gap:8px;flex-wrap:wrap;background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;pointer-events:none}
 .pulsebox{pointer-events:auto;display:flex;align-items:center;gap:12px;padding:8px 14px 8px 8px}
 .pulsebox svg{width:52px;height:52px;flex:none}
 .pulsebox .big{font-family:var(--f-display);font-weight:800;font-size:30px;line-height:1}
@@ -93,7 +93,7 @@ button{cursor:pointer}
 .gchip .bar{height:3px;border-radius:2px;background:var(--surface-2);overflow:hidden}
 .gchip .bar i{display:block;height:100%}
 
-.ov-layers{top:96px;left:max(12px,env(safe-area-inset-left,0px));width:236px;padding:12px;display:grid;gap:12px;max-height:calc(100% - 330px);overflow:auto}
+.ov-layers{top:96px;right:max(12px,env(safe-area-inset-right,0px));width:236px;padding:12px;display:grid;gap:12px;max-height:calc(100% - 330px);overflow:auto}
 .ov-layers h3{margin:0;font-family:var(--f-display);font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .seg button,.chorobtn{background:transparent;border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:12px;color:var(--muted);text-align:left}
@@ -109,7 +109,7 @@ button{cursor:pointer}
 [hidden]{display:none!important}
 .pulsebox,.gchip{position:relative}
 
-.ov-legend{left:max(12px,env(safe-area-inset-left,0px));bottom:110px;padding:9px 12px;display:grid;gap:6px;max-width:min(420px,calc(100% - 430px));min-width:220px}
+.ov-legend{right:max(12px,env(safe-area-inset-right,0px));bottom:110px;padding:9px 12px;display:grid;gap:6px;max-width:min(420px,calc(100% - 430px));min-width:220px}
 .legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
 .legend .sw{display:flex;gap:1px}
 .legend .sw span{display:inline-block;height:9px;width:20px;font-size:0}
@@ -117,12 +117,12 @@ button{cursor:pointer}
 .legend .k span{display:inline-flex;align-items:center;gap:4px}
 .legend .k i{width:10px;height:10px;border-radius:2px;display:inline-block}
 
-.ov-zoom{right:404px;bottom:110px;display:grid;padding:3px;gap:3px}
+.ov-zoom{left:404px;bottom:110px;display:grid;padding:3px;gap:3px}
 .ov-zoom button{width:32px;height:32px;border-radius:8px;border:0;background:transparent;font-size:16px;font-weight:600}
 .ov-zoom button:hover{background:var(--surface-2)}
-.ov-coord{right:450px;bottom:110px;padding:5px 9px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.ov-coord{left:450px;bottom:110px;padding:5px 9px;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
 
-.drawer{position:absolute;z-index:6;top:12px;right:max(12px,env(safe-area-inset-right,0px));bottom:52px;width:380px;display:flex;flex-direction:column;overflow:hidden}
+.drawer{position:absolute;z-index:6;top:12px;left:max(12px,env(safe-area-inset-left,0px));bottom:52px;width:380px;display:flex;flex-direction:column;overflow:hidden}
 .tabs{display:flex;border-bottom:1px solid var(--line);flex:none;overflow-x:auto;scrollbar-width:none}
 .tabs button{flex:1 0 auto;background:none;border:0;padding:10px 7px;font-size:11.5px;white-space:nowrap;font-weight:600;color:var(--muted);border-bottom:2px solid transparent}
 .tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
@@ -137,7 +137,7 @@ button{cursor:pointer}
 .ticker .run i{width:7px;height:7px;border-radius:50%;display:inline-block}
 @keyframes run{to{transform:translateX(-50%)}}
 
-.ov-time{left:max(12px,env(safe-area-inset-left,0px));right:404px;bottom:50px;display:flex;align-items:center;gap:12px;padding:8px 12px}
+.ov-time{left:404px;right:max(12px,env(safe-area-inset-right,0px));bottom:50px;display:flex;align-items:center;gap:12px;padding:8px 12px}
 .ov-time button{width:34px;height:34px;flex:none;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:13px;font-weight:700}
 .ov-time button:disabled{background:var(--surface-2);color:var(--faint);cursor:not-allowed}
 .ov-time input{flex:1;min-width:0;accent-color:var(--accent)}
@@ -278,12 +278,12 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
   .mapbox{position:relative;height:68svh;min-height:420px;overflow:hidden}
   .drawer{position:static;width:auto;border-radius:0;border-left:0;border-right:0;max-height:none;backdrop-filter:none;background:var(--surface)}
   .tabpane{max-height:70svh}
-  .ov-top{right:12px}.ov-top .gchip{display:none}
+  .ov-top{left:12px;right:12px}.ov-top .gchip{display:none}
   .ov-layers{top:76px;width:210px;max-height:calc(100% - 140px)}
   .ov-layers.closed .collapse-body{display:none}
   .collapse{display:inline-block}
-  .ov-zoom{right:12px;bottom:110px}.ov-coord{display:none}.ov-time{right:12px}.ov-time .tl{width:120px}.ov-time .tl span{display:none}
-  .ov-legend{max-width:calc(100% - 70px);min-width:0}
+  .ov-zoom{left:12px;bottom:110px}.ov-coord{display:none}.ov-time{left:12px;right:12px}.ov-time .tl{width:120px}.ov-time .tl span{display:none}
+  .ov-legend{right:12px;max-width:calc(100% - 70px);min-width:0}
   .span2{grid-column:auto}.panels{grid-template-columns:1fr}.form{grid-template-columns:1fr 1fr}
 }
 @media (min-width:901px){.mapbox{position:absolute;inset:0}}
@@ -582,7 +582,7 @@ Promise.all([d3.json("india.json"),d3.json("nb.json")]).then(function(res){
 }).catch(function(e){$("#loading").textContent="The map data could not load. Reload the page to try again.";console.error(e)});
 
 function size(){var b=$("#mapbox").getBoundingClientRect();W=Math.max(320,b.width);H=Math.max(320,b.height);svg.attr("viewBox","0 0 "+W+" "+H)}
-function fitPad(){var wide=W>900;return {l:wide?260:14,r:wide?410:14,t:wide?96:70,b:52}}
+function fitPad(){var wide=W>900;return {l:wide?410:14,r:wide?260:14,t:wide?96:70,b:52}}
 function build(){
   size();
   var pad=fitPad(),india={type:"FeatureCollection",features:statesF};
