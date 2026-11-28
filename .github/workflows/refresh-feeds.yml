@@ -17,7 +17,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
 
@@ -33,7 +33,7 @@ jobs:
           ls out
 
       - name: Fetch feeds
-        run: python -I scripts/fetch_feeds.py india.json out
+        run: python -u -I scripts/fetch_feeds.py india.json out
 
       - name: Publish to feeds branch
         run: |

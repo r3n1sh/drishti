@@ -221,7 +221,7 @@ def fetch_cyclones():
               "https://www.gdacs.org/gdacsapi/api/Events/geteventlist/MAP?eventtype=TC",
               "https://www.gdacs.org/gdacsapi/api/Events/geteventlist/EVENTS4APP?eventtype=TC"]:
         try:
-            d = json.loads(get(u, tries=1, timeout=60)); break
+            d = json.loads(get(u, tries=1, timeout=25)); break
         except Exception as e:
             last = e
     if d is None: raise last
@@ -623,7 +623,7 @@ def fetch_cyber():
         d = None; last = None
         for path in ["outages/events", "outages/alerts"]:
             try:
-                d = json.loads(get("https://api.ioda.inetintel.cc.gatech.edu/v2/" + path + "?" + urllib.parse.urlencode({"entityType": "region", "relatedTo": "country/IN", "from": t0, "until": t1, "limit": 200}), tries=1, timeout=150)); break
+                d = json.loads(get("https://api.ioda.inetintel.cc.gatech.edu/v2/" + path + "?" + urllib.parse.urlencode({"entityType": "region", "relatedTo": "country/IN", "from": t0, "until": t1, "limit": 200}), tries=1, timeout=45)); break
             except Exception as e:
                 last = e
         if d is None: raise last
