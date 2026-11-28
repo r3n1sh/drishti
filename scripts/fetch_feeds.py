@@ -215,7 +215,16 @@ def fetch_quakes():
 
 # ---------------- CYCLONES (GDACS) ----------------
 def fetch_cyclones():
-    d = json.loads(get("https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&alertlevel=Green;Orange;Red&limit=50"))
+    d = None; last = None
+    for u in ["https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=TC&alertlevel=Green;Orange;Red&limit=50",
+              "https://www.gdacs.org/gdacsapi/api/Events/geteventlist/SEARCH?eventtype=TC&alertlevel=Green;Orange;Red",
+              "https://www.gdacs.org/gdacsapi/api/Events/geteventlist/MAP?eventtype=TC",
+              "https://www.gdacs.org/gdacsapi/api/Events/geteventlist/EVENTS4APP?eventtype=TC"]:
+        try:
+            d = json.loads(get(u, tries=1, timeout=60)); break
+        except Exception as e:
+            last = e
+    if d is None: raise last
     out = []
     cut = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=3)
     for f in d.get("features", []):
@@ -611,7 +620,13 @@ def fetch_cyber():
     # IODA internet outage alerts for Indian states (may be unreachable from some networks)
     try:
         t1 = int(time.time()); t0 = t1 - 7 * 86400
-        d = json.loads(get("https://api.ioda.inetintel.cc.gatech.edu/v2/outages/events?" + urllib.parse.urlencode({"entityType": "region", "relatedTo": "country/IN", "from": t0, "until": t1, "limit": 200}), tries=2, timeout=60))
+        d = None; last = None
+        for path in ["outages/events", "outages/alerts"]:
+            try:
+                d = json.loads(get("https://api.ioda.inetintel.cc.gatech.edu/v2/" + path + "?" + urllib.parse.urlencode({"entityType": "region", "relatedTo": "country/IN", "from": t0, "until": t1, "limit": 200}), tries=1, timeout=150)); break
+            except Exception as e:
+                last = e
+        if d is None: raise last
         evs = []
         for e in (d.get("data") or []):
             loc = (e.get("location_name") or e.get("location") or "")
@@ -619,7 +634,7 @@ def fetch_cyber():
             ent = e.get("entity") or {}
             nm = (ent.get("name") or name or "").lower()
             st = IODA_REGION.get(nm)
-            start = e.get("start") or e.get("from")
+            start = e.get("start") or e.get("from") or e.get("time")
             evs.append({"region": ent.get("name") or name, "st": st, "start": dt.datetime.fromtimestamp(int(start), IST).strftime("%Y-%m-%dT%H:%M") if start else None,
                         "dur": e.get("duration"), "score": e.get("score")})
         out["outages"] = evs[:60]
