@@ -553,7 +553,101 @@ def fetch_official():
         print("pib fail", e)
     return {"items": out, "src": "RBI press releases and PIB (Government of India) RSS"}
 
-JOBS = [("air", fetch_air), ("weather", fetch_weather), ("fires", fetch_fires), ("quakes", fetch_quakes), ("cyclones", fetch_cyclones), ("news", fetch_news), ("alerts", fetch_alerts), ("official", fetch_official), ("world", fetch_world), ("social", fetch_social), ("schemenews", fetch_schemenews)]
+# ---------------- CYBER ----------------
+IODA_REGION = {"andhra pradesh": "AP", "arunachal pradesh": "AR", "assam": "AS", "bihar": "BR", "chhattisgarh": "CG", "goa": "GA", "gujarat": "GJ",
+    "haryana": "HR", "himachal pradesh": "HP", "jharkhand": "JH", "karnataka": "KA", "kerala": "KL", "madhya pradesh": "MP", "maharashtra": "MH",
+    "manipur": "MN", "meghalaya": "ML", "mizoram": "MZ", "nagaland": "NL", "odisha": "OD", "orissa": "OD", "punjab": "PB", "rajasthan": "RJ",
+    "sikkim": "SK", "tamil nadu": "TN", "telangana": "TG", "tripura": "TR", "uttar pradesh": "UP", "uttarakhand": "UK", "west bengal": "WB",
+    "delhi": "DL", "national capital territory of delhi": "DL", "jammu and kashmir": "JK", "ladakh": "LA", "chandigarh": "CH", "puducherry": "PY",
+    "andaman and nicobar islands": "AN", "lakshadweep": "LD", "dadra and nagar haveli and daman and diu": "DH"}
+def fetch_cyber():
+    out = {"src": "ransomware.live, CISA KEV, NVD, IODA, SANS ISC, Indian press"}
+    now = dt.datetime.now(dt.timezone.utc)
+    # ransomware claims against Indian organisations
+    try:
+        d = json.loads(get("https://api.ransomware.live/v2/countryvictims/IN", tries=2, timeout=60))
+        months = {}
+        for v in d:
+            m = (v.get("discovered") or "")[:7]
+            if m: months[m] = months.get(m, 0) + 1
+        keys = sorted(months)[-12:]
+        recent = sorted(d, key=lambda v: v.get("discovered") or "", reverse=True)
+        cut30 = (now - dt.timedelta(days=30)).isoformat()
+        last30 = [v for v in recent if (v.get("discovered") or "") >= cut30]
+        def cnt(field, rows):
+            c = {}
+            for v in rows:
+                k = (v.get(field) or "Unknown").strip() or "Unknown"
+                if k in ("Not Found", "None"): k = "Unknown"
+                c[k] = c.get(k, 0) + 1
+            return sorted(c.items(), key=lambda x: -x[1])[:8]
+        out["ransom"] = {"months": [[k, months[k]] for k in keys], "n30": len(last30), "groups": cnt("group_name", last30), "sectors": cnt("activity", last30),
+            "recent": [{"org": (v.get("post_title") or "")[:90], "group": v.get("group_name"), "sector": (v.get("activity") or "Unknown").replace("Not Found", "Unknown"),
+                        "t": dt.datetime.fromisoformat(v["discovered"]).astimezone(IST).strftime("%Y-%m-%dT%H:%M")} for v in recent[:25] if v.get("discovered")]}
+    except Exception as e:
+        print("ransom fail", e)
+    # CISA known exploited vulnerabilities, last 14 days
+    try:
+        d = json.loads(get("https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json", tries=2, timeout=60))
+        cut = (now - dt.timedelta(days=14)).strftime("%Y-%m-%d")
+        kev = [{"cve": v["cveID"], "vendor": v["vendorProject"], "product": v["product"], "name": v["vulnerabilityName"][:120], "added": v["dateAdded"],
+                "ransom": v.get("knownRansomwareCampaignUse") == "Known"} for v in d["vulnerabilities"] if v["dateAdded"] >= cut]
+        out["kev"] = sorted(kev, key=lambda x: x["added"], reverse=True)[:30]
+        out["kevTotal"] = d.get("count")
+    except Exception as e:
+        print("kev fail", e)
+    # NVD critical CVEs, last 7 days
+    try:
+        q = urllib.parse.urlencode({"cvssV3Severity": "CRITICAL", "resultsPerPage": 1, "pubStartDate": (now - dt.timedelta(days=7)).strftime("%Y-%m-%dT00:00:00.000"),
+                                    "pubEndDate": now.strftime("%Y-%m-%dT%H:%M:00.000")})
+        out["nvdCritical7d"] = json.loads(get("https://services.nvd.nist.gov/rest/json/cves/2.0?" + q, tries=2, timeout=60)).get("totalResults")
+    except Exception as e:
+        print("nvd fail", e)
+    # SANS Internet Storm Center threat level
+    try:
+        out["infocon"] = json.loads(get("https://isc.sans.edu/api/infocon?json", tries=2, timeout=30)).get("status")
+    except Exception as e:
+        print("isc fail", e)
+    # IODA internet outage alerts for Indian states (may be unreachable from some networks)
+    try:
+        t1 = int(time.time()); t0 = t1 - 7 * 86400
+        d = json.loads(get("https://api.ioda.inetintel.cc.gatech.edu/v2/outages/events?" + urllib.parse.urlencode({"entityType": "region", "relatedTo": "country/IN", "from": t0, "until": t1, "limit": 200}), tries=2, timeout=60))
+        evs = []
+        for e in (d.get("data") or []):
+            loc = (e.get("location_name") or e.get("location") or "")
+            name = loc.split("/")[-1] if "/" in loc else loc
+            ent = e.get("entity") or {}
+            nm = (ent.get("name") or name or "").lower()
+            st = IODA_REGION.get(nm)
+            start = e.get("start") or e.get("from")
+            evs.append({"region": ent.get("name") or name, "st": st, "start": dt.datetime.fromtimestamp(int(start), IST).strftime("%Y-%m-%dT%H:%M") if start else None,
+                        "dur": e.get("duration"), "score": e.get("score")})
+        out["outages"] = evs[:60]
+    except Exception as e:
+        print("ioda fail", e)
+    # Indian cyber news
+    try:
+        items = {}; seen_words = []
+        for q in ["India (cyberattack OR \"cyber attack\" OR ransomware OR \"data breach\" OR \"data leak\" OR hacked OR hackers) when:2d",
+                  "(CERT-In OR \"cyber fraud\" OR \"digital arrest\" OR phishing OR \"UPI fraud\" OR \"cyber crime\") India when:2d"]:
+            for t, u, src, seen in gnews(q, 60):
+                ingest(items, seen_words, t, u, src, seen, need_state=False, need_dom=False)
+            time.sleep(1)
+        lst = [x for x in items.values() if re.search(r"cyber|ransom|breach|leak|hack|phish|fraud|scam|malware|cert-in|ddos|digital arrest|data", x["t"].lower())
+               and (x.get("st") or re.search(r"india|indian|cert-in|upi|aadhaar|crore|lakh|rbi|npci|dpdp|\bmeity\b", x["t"].lower()))
+               and not re.search(r"\bus\b|u\.s\.|air force|pentagon|malaysians", x["t"].lower())]
+        for x in lst:
+            low = x["t"].lower()
+            x["kind"] = ("Ransomware" if "ransom" in low else "Breach" if re.search(r"breach|leak|exposed", low) else "Fraud" if re.search(r"fraud|scam|digital arrest|phish", low)
+                         else "Advisory" if re.search(r"cert-in|advisory|vulnerab|patch", low) else "Attack")
+            x.pop("dom", None)
+        out["news"] = sorted(lst, key=lambda x: x["seen"], reverse=True)[:60]
+    except Exception as e:
+        print("cyber news fail", e)
+    if not any(k in out for k in ("ransom", "kev", "news")): raise RuntimeError("all cyber sources failed")
+    return out
+
+JOBS = [("air", fetch_air), ("weather", fetch_weather), ("fires", fetch_fires), ("quakes", fetch_quakes), ("cyclones", fetch_cyclones), ("news", fetch_news), ("alerts", fetch_alerts), ("official", fetch_official), ("world", fetch_world), ("social", fetch_social), ("schemenews", fetch_schemenews), ("cyber", fetch_cyber)]
 try:
     meta = json.load(open(os.path.join(OUT, "meta.json"))) if ONLY else None
 except Exception:

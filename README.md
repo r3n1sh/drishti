@@ -16,6 +16,7 @@ A map-first situation desk for India. Every state and district on one interactiv
 | Press signals | Google News RSS + GDELT | hourly |
 | World → India | Google News (international stories mentioning India) | hourly |
 | Social pulse | Bluesky news accounts, Mastodon hashtags | hourly |
+| Cyber watch | ransomware.live (India victims), CISA KEV, NIST NVD, IODA state outages, SANS ISC, Google News | hourly |
 | Government schemes | Curated list (`schemes.json`) + live scheme news | list: manual; news: hourly |
 
 Every reading on the site comes from these feeds; there is no sample or simulated data. District shading uses real point counts (fires, quakes) or the nearest tracked city (air, weather).

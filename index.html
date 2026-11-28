@@ -270,6 +270,20 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
 .sch{border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:5px;align-content:start}
 #schNews{max-height:600px;overflow:auto}
 @media (max-width:760px){.wgrid,.schgrid{grid-template-columns:1fr}}
+.cystats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.cystats>div{background:var(--surface-2);border-radius:10px;padding:10px 12px;display:grid;gap:2px}
+.cystats b{font-family:var(--f-display);font-size:28px;font-weight:700;line-height:1.1}
+.cybars{display:flex;align-items:flex-end;gap:6px;height:104px;margin-top:6px}
+.cybars>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;min-width:0}
+.cybars i{display:block;width:100%;max-width:34px;background:var(--crit);border-radius:4px 4px 0 0;opacity:.85}
+.cybars span{font-size:10.5px;color:var(--muted)}.cybars small{font-size:10px;color:var(--muted)}
+.cyrow{display:grid;grid-template-columns:minmax(0,1fr) 90px 24px;gap:8px;align-items:center;font-size:12px;margin-top:5px}
+.cyrow span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cyrow .hbar{margin:0}
+.cygrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:14px}
+.cygrid ul{max-height:440px;overflow:auto}
+.cytop{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;margin-top:14px}
+.cytop>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:1000px){.cygrid,.cytop{grid-template-columns:1fr}.cytop>div:last-child{grid-template-columns:1fr}}
 .toast{position:fixed;right:max(16px,calc(env(safe-area-inset-right,0px) + 16px));top:calc(104px + env(safe-area-inset-top,0px));background:var(--fg);color:var(--bg);padding:8px 13px;border-radius:10px;font-size:12.5px;z-index:40}
 
 @media (max-width:1100px){.ov-top .gchip:nth-child(n+5){display:none}}
@@ -373,6 +387,18 @@ td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabula
       <div class="filters" id="worldF"></div>
       <div class="wgrid"><div id="worldRegions" style="display:grid;gap:2px;align-content:start"></div><ul class="list" id="worldList"></ul></div>
       <div class="src">wire: Google News, international press mentioning India · turn on the “World → India” overlay to shade neighbours on the map</div>
+    </div>
+    <div class="card span2" id="cyberCard" style="grid-column:1/-1">
+      <div class="card-h"><div><h2>Cyber watch</h2><div class="sub">Ransomware against Indian organisations, actively exploited vulnerabilities, internet health and cyber news</div></div><span class="badge" data-feed2="cyber">Waiting</span></div>
+      <div class="cystats" id="cyStats"></div>
+      <div class="cytop"><div id="cyMonths"></div><div id="cyBreak"></div></div>
+      <div class="cygrid">
+        <div><span class="lbl">Cyber news · India · 48 h</span><div class="filters" id="cyF" style="margin-top:6px"></div><ul class="list" id="cyNews"></ul></div>
+        <div><span class="lbl">Latest ransomware claims</span><ul class="list" id="cyRansom"></ul><span class="lbl" style="display:block;margin-top:14px">State internet outages · 7 d</span><ul class="list" id="cyOut"></ul></div>
+        <div><span class="lbl">Newly exploited vulnerabilities</span><ul class="list" id="cyKev"></ul></div>
+      </div>
+      <p class="note" style="margin-top:10px">Ransomware entries are claims posted by criminal groups on their leak sites, tracked by ransomware.live; they are not confirmed by the named organisations.</p>
+      <div class="src">wire: ransomware.live · CISA Known Exploited Vulnerabilities · NIST NVD · IODA (Georgia Tech) · SANS ISC · Indian press via Google News</div>
     </div>
     <div class="card" id="socialCard">
       <div class="card-h"><div><h2>Social pulse</h2><div class="sub">Public posts from Indian news accounts and hashtags</div></div><span class="badge" data-feed2="social">Waiting</span></div>
@@ -818,7 +844,7 @@ function renderPanels(){
   if(!$("#quakes tbody").innerHTML)$("#quakes tbody").innerHTML='<tr><td colspan="4" style="color:var(--muted)">'+(LIVE.quakes?"No earthquakes in this view.":"Waiting for the earthquake feed.")+'</td></tr>';
   if(!$("#aqi").innerHTML)$("#aqi").innerHTML='<li><span class="note">'+(LIVE.aqi?"No tracked city in this view.":"Waiting for the air feed.")+'</span></li>';
   if(!$("#weather").innerHTML)$("#weather").innerHTML='<li><span class="note">Waiting for the weather feed.</span></li>';
-  $("#sources").innerHTML=[["Air quality","CAMS atmospheric model via Open-Meteo, converted to the Indian National AQI"],["Weather","Open-Meteo forecast and 7-day history for 80+ cities"],["Fire hotspots","NASA FIRMS VIIRS (NOAA-20, NOAA-21, Suomi NPP)"],["Earthquakes","USGS FDSN event service, M 2.5+"],["Cyclones","GDACS tropical cyclone alerts"],["Official alerts","NDMA SACHET common alerting protocol: IMD, state disaster authorities, CWC, INCOIS"],["Official releases","RBI press releases, PIB"],["Press signals","Google News RSS and GDELT"],["World → India","Google News, international stories mentioning India"],["Social pulse","Bluesky news accounts, Mastodon hashtags"],["Schemes","Curated national and state list; scheme news from Google News"],["Boundaries and facts","india-maps-data (2019), Census 2011, BIS IS 1893 seismic zones"]].map(function(x){return '<div><b>'+x[0]+'</b><p>'+x[1]+'</p></div>'}).join("");
+  $("#sources").innerHTML=[["Air quality","CAMS atmospheric model via Open-Meteo, converted to the Indian National AQI"],["Weather","Open-Meteo forecast and 7-day history for 80+ cities"],["Fire hotspots","NASA FIRMS VIIRS (NOAA-20, NOAA-21, Suomi NPP)"],["Earthquakes","USGS FDSN event service, M 2.5+"],["Cyclones","GDACS tropical cyclone alerts"],["Official alerts","NDMA SACHET common alerting protocol: IMD, state disaster authorities, CWC, INCOIS"],["Official releases","RBI press releases, PIB"],["Press signals","Google News RSS and GDELT"],["World → India","Google News, international stories mentioning India"],["Social pulse","Bluesky news accounts, Mastodon hashtags"],["Cyber watch","ransomware.live, CISA KEV, NIST NVD, IODA, SANS ISC, Google News"],["Schemes","Curated national and state list; scheme news from Google News"],["Boundaries and facts","india-maps-data (2019), Census 2011, BIS IS 1893 seismic zones"]].map(function(x){return '<div><b>'+x[0]+'</b><p>'+x[1]+'</p></div>'}).join("");
 }
 
 /* ---------- rules ---------- */
@@ -855,7 +881,7 @@ function setBadges(){document.querySelectorAll(".badge[data-feed2]").forEach(fun
     $("#feedStatus").innerHTML='<span class="lbl">Feed status · last refresh '+esc(m.updated.replace("T"," "))+' IST</span><div class="chips" style="margin-top:6px">'+Object.keys(m.feeds).map(function(k){var x=m.feeds[k];return '<span class="chip" style="border-color:'+(x.ok&&!x.stale?"var(--good)":"var(--warn)")+'">'+esc(k)+' · '+(x.ok&&!x.stale?"fresh":"kept previous")+'</span>'}).join("")+'</div>'}
 }
 function noLive(msg){$("#feedTxt").textContent=msg;$("#feedPill").title="Live feeds could not be loaded"}
-var FEED_KEYS=["meta","air","weather","fires","quakes","cyclones","news","alerts","official","world","social","schemenews"],lastUpdated=null;
+var FEED_KEYS=["meta","air","weather","fires","quakes","cyclones","news","alerts","official","world","social","schemenews","cyber"],lastUpdated=null;
 /* Live data: the hourly GitHub Action force-pushes fresh JSON to the "feeds" branch; the copy in /data is a fallback snapshot. */
 var DATA_BASES=["https://raw.githubusercontent.com/r3n1sh/drishti/feeds/data/","data/"],DATA_BASE=DATA_BASES[0];
 function connectFeeds(){
@@ -867,7 +893,7 @@ function connectFeeds(){
   load(true);setInterval(function(){load(false)},5*60*1000);
 }
 var qa,newsDirty=false;
-function queueApply(k){if(k==="news"||k==="alerts"||k==="official"||k==="social")newsDirty=true;clearTimeout(qa);qa=setTimeout(function(){applyAll(true)},150)}
+function queueApply(k){if(k==="news"||k==="alerts"||k==="official"||k==="social"||k==="cyber")newsDirty=true;clearTimeout(qa);qa=setTimeout(function(){applyAll(true)},150)}
 function applyAll(full){
   DV={};
   var a=FEED.air;
@@ -892,8 +918,8 @@ function applyAll(full){
   if(q&&q.list){LIVE.quake=LIVE.quakes=true;var bq={};QUAKES=[];
     q.list.forEach(function(x){var tt=istDate(x.t).getTime();if(tt>tEnd||tt<tEnd-7*24*3600e3)return;QUAKES.push([x.t.slice(5,10).replace("-","/")+" "+x.t.slice(11),x.place,x.st||"—",x.mag,x.depth,x.ll]);if(x.st)bq[x.st]=(bq[x.st]||0)+1});
     S.forEach(function(s){QUAKE[s.code]=bq[s.code]||0})}
-  if(FEED.news||FEED.alerts||FEED.official||FEED.social){buildSignals();ei=EXTRA.length;LIVE.signals=true}
-  computePulse();renderConsole();renderTop();if(mapReady){wxVis();drawAlerts();paint();buildPoints()}renderDossier();renderFilters();renderStream();renderPanels();renderBrief();renderWorld();renderSocial();renderSchemes();evalRules();setBadges();updateTime();
+  if(FEED.news||FEED.alerts||FEED.official||FEED.social||FEED.cyber){buildSignals();ei=EXTRA.length;LIVE.signals=true}
+  computePulse();renderConsole();renderTop();if(mapReady){wxVis();drawAlerts();paint();buildPoints()}renderDossier();renderFilters();renderStream();renderPanels();renderBrief();renderWorld();renderSocial();renderSchemes();renderCyber();evalRules();setBadges();updateTime();
   if($("#pane-places").hidden===false)renderPlaces();if($("#pane-compare").hidden===false)renderCompare();
 }
 /* merged signals: press + official + NDMA alerts + derived */
@@ -905,6 +931,8 @@ function buildSignals(){var out=[];
   Object.keys(grp).forEach(function(k){var g=grp[k],a=g[0],sev=Math.max.apply(null,g.map(function(x){return x.sev}));
     out.push({sev:sev,dom:/quake|tsunami/i.test(a.event)?"quake":"weather",st:a.st,t:a.event+" warning"+(g.length>1?" for "+g.length+" areas: "+a.area.split(",").slice(0,3).join(",")+"…":": "+(a.head.length>150?a.head.slice(0,150)+"…":a.head)),src:a.sender,url:a.url,ago:a.eff?minsAgo(a.eff):0,kind:"alert"})});
   ((FEED.social&&FEED.social.items)||[]).forEach(function(x){if(x.st&&BY[x.st])out.push({sev:1,dom:DOM[x.dom]?x.dom:"infra",st:x.st,t:x.t.length>160?x.t.slice(0,160)+"…":x.t,src:x.plat+" · "+x.who,url:x.url,ago:minsAgo(x.seen),kind:"social"})});
+  ((FEED.cyber&&FEED.cyber.news)||[]).forEach(function(x){if(x.st&&BY[x.st])out.push({sev:/Ransomware|Attack|Breach/.test(x.kind)?2:1,dom:"cyber",st:x.st,t:x.t,src:x.src||"news",url:x.url,ago:minsAgo(x.seen),n:x.n||1,kind:"press"})});
+  ((FEED.cyber&&FEED.cyber.outages)||[]).forEach(function(o){if(o.st&&BY[o.st])out.push({sev:3,dom:"cyber",st:o.st,t:"Internet outage detected in "+o.region+(o.dur?" for "+Math.round(o.dur/60)+" min":""),src:"IODA",ago:o.start?minsAgo(o.start):0,kind:"derived"})});
   derivedSignals().forEach(function(d){out.push(d)});
   out.sort(function(a,b){return a.ago-b.ago||b.sev-a.sev});
   out.forEach(function(e,i){var c=STCAP[e.st]||[78,22],r=rng(i*17+3);e.id=i;e.isNew=false;e.live=1;e.ll=e.ll||[c[0]+(r()-.5)*.8,c[1]+(r()-.5)*.8]});
@@ -932,7 +960,7 @@ function drawAlerts(){if(!gAl)return;var list=(OVL.alerts.on&&FEED.alerts&&FEED.
 var focus=null;
 function setFocus(c){focus=c&&BY[c]?c:null;stFilter=null;
   $("#deskTitle").textContent="Domain desks · "+(focus?BY[focus].name:"All India");$("#clearFocus").hidden=!focus;
-  renderTop();renderFilters();renderStream();renderPanels();renderSocial();renderSchemes()}
+  renderTop();renderFilters();renderStream();renderPanels();renderSocial();renderSchemes();renderCyber()}
 $("#clearFocus").addEventListener("click",function(){$("#zreset").click()});
 function focusQ(){if(!focus)return QUAKES;var c=STCAP[focus];return QUAKES.filter(function(q){return q[2]===focus||(q[5]&&hav(c,q[5])<=500)})}
 
@@ -988,6 +1016,31 @@ $("#schTabs").addEventListener("click",function(e){var b=e.target.closest("[data
 $("#schTabs").addEventListener("change",function(e){if(e.target.id==="schState"){schSt=e.target.value||null;schTab="state";schSec=null;renderSchemes()}});
 $("#schSec").addEventListener("click",function(e){var b=e.target.closest("[data-sec]");if(!b)return;schSec=b.dataset.sec||null;renderSchemes()});
 $("#schQ").addEventListener("input",renderSchemes);
+/* ---------- Cyber watch ---------- */
+var cyF=null;
+function renderCyber(){var C=FEED.cyber;
+  if(!C){$("#cyStats").innerHTML='<p class="note">Waiting for the cyber feed.</p>';return}
+  var R_=C.ransom||{},K=C.kev||[],kr=K.filter(function(k){return k.ransom}).length,ic=(C.infocon||"").toLowerCase();
+  var icC={green:"var(--good)",yellow:"var(--warn)",orange:"var(--high)",red:"var(--crit)"}[ic]||"var(--muted)";
+  var tiles=[["Ransomware claims · 30 d",R_.n30!=null?R_.n30:"—","Indian organisations named on leak sites",R_.n30>25?"var(--crit)":R_.n30>10?"var(--high)":"var(--warn)"],
+    ["Exploited bugs · 14 d",K.length,kr+" used in ransomware · CISA KEV",K.length>15?"var(--high)":"var(--warn)"],
+    ["Critical CVEs · 7 d",C.nvdCritical7d!=null?C.nvdCritical7d:"—","CVSS 9+ published worldwide · NVD","var(--warn)"],
+    ["Internet threat level",ic?ic.toUpperCase():"—","SANS Internet Storm Center",icC]];
+  if(C.outages)tiles.push(["State internet outages · 7 d",C.outages.length,"IODA outage events",C.outages.length?"var(--high)":"var(--good)"]);
+  $("#cyStats").innerHTML=tiles.map(function(t){return '<div><span class="lbl">'+esc(t[0])+'</span><b style="color:'+t[3]+'">'+esc(t[1])+'</b><span style="font-size:11px;color:var(--muted)">'+esc(t[2])+'</span></div>'}).join("");
+  var M=R_.months||[],mx=Math.max.apply(null,M.map(function(m){return m[1]}).concat([1]));
+  $("#cyMonths").innerHTML=M.length?'<span class="lbl">Ransomware claims against Indian organisations, by month</span><div class="cybars">'+M.map(function(m){var lab=new Date(m[0]+"-01T00:00:00Z").toLocaleDateString("en-IN",{month:"short",timeZone:"UTC"});return '<div title="'+esc(m[0])+': '+m[1]+'"><span class="num">'+m[1]+'</span><i style="height:'+Math.max(3,m[1]/mx*70)+'px"></i><small>'+lab+'</small></div>'}).join("")+'</div>':"";
+  function bars(list,title){if(!list||!list.length)return "";var m=list[0][1]||1;return '<div><span class="lbl">'+title+'</span>'+list.slice(0,6).map(function(g){return '<div class="cyrow"><span>'+esc(g[0])+'</span><span class="hbar"><i style="width:'+(g[1]/m*100)+'%;background:var(--crit)"></i></span><span class="num">'+g[1]+'</span></div>'}).join("")+'</div>'}
+  $("#cyBreak").innerHTML=bars(R_.sectors,"Sectors hit · 30 d")+bars(R_.groups,"Groups claiming · 30 d");
+  $("#cyRansom").innerHTML=(R_.recent||[]).slice(0,14).map(function(v){return '<li><div class="row"><b class="nm">'+esc(v.org)+'</b><span class="num" style="font-size:11px;color:var(--muted);flex:none">'+ago(minsAgo(v.t))+'</span></div><div style="font-size:11.5px;color:var(--muted)">'+esc(v.sector)+' · claimed by <span style="color:var(--crit)">'+esc(v.group)+'</span></div></li>'}).join("")||'<li><span class="note">No recent claims.</span></li>';
+  var N=C.news||[],kinds=["Attack","Breach","Ransomware","Fraud","Advisory"];
+  $("#cyF").innerHTML='<button type="button" data-cy="" aria-pressed="'+(!cyF)+'">All</button>'+kinds.map(function(k){var n=N.filter(function(x){return x.kind===k}).length;return n?'<button type="button" data-cy="'+k+'" aria-pressed="'+(cyF===k)+'">'+k+' · '+n+'</button>':""}).join("");
+  var nl=N.filter(function(x){return (!cyF||x.kind===cyF)&&(!focus||x.st===focus)});var fnote="";if(focus&&!nl.length){nl=N.filter(function(x){return !cyF||x.kind===cyF});fnote='<li><span class="note">No cyber stories located in '+esc(BY[focus].name)+'; showing all India.</span></li>'}
+  $("#cyNews").innerHTML=fnote+nl.slice(0,25).map(function(x){return '<li><a class="wlink" href="'+(/^https:\/\//.test(x.url||"")?esc(x.url):"#")+'" target="_blank" rel="noopener">'+esc(x.t)+'</a><div style="font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap"><span style="color:var(--peacock);font-weight:600">'+esc(x.kind)+'</span>'+(x.st&&BY[x.st]?'<span>'+esc(BY[x.st].name)+'</span>':'')+'<span>'+esc(x.src||"")+(x.n>1?' +'+(x.n-1)+' more':'')+'</span><span class="num">'+ago(minsAgo(x.seen))+'</span></div></li>'}).join("")||'<li><span class="note">No stories in this filter.</span></li>';
+  $("#cyKev").innerHTML=K.slice(0,14).map(function(k){return '<li><div class="row"><b class="nm num" style="font-size:12.5px">'+esc(k.cve)+'</b>'+(k.ransom?'<span class="chip" style="font-size:10px;color:var(--crit);border-color:var(--crit);flex:none">Ransomware</span>':'')+'</div><div style="font-size:12px">'+esc(k.vendor+" "+k.product)+'</div><div style="font-size:11px;color:var(--muted)">'+esc(k.name)+' · added '+esc(k.added)+'</div><a class="linkbtn" href="https://nvd.nist.gov/vuln/detail/'+encodeURIComponent(k.cve)+'" target="_blank" rel="noopener">NVD ↗</a></li>'}).join("")||'<li><span class="note">None in 14 days.</span></li>';
+  var O=C.outages;$("#cyOut").innerHTML=O?(O.filter(function(o){return !focus||o.st===focus}).slice(0,12).map(function(o){return '<li><div class="row"><b>'+esc(o.region||"Region")+'</b><span class="num" style="font-size:11px;color:var(--muted)">'+esc((o.start||"").replace("T"," "))+'</span></div><div style="font-size:11px;color:var(--muted)">'+(o.dur?Math.round(o.dur/60)+' min':'')+'</div></li>'}).join("")||'<li><span class="note">No state-level internet outages detected.</span></li>'):'<li><span class="note">Outage feed unavailable this hour.</span></li>';
+}
+document.addEventListener("click",function(e){var b=e.target.closest("#cyF [data-cy]");if(b){cyF=b.dataset.cy||null;renderCyber()}});
 /* time slider */
 var playT=null;
 function updateTime(){var sl=$("#slider"),pb=$("#play");if(!HOURS){sl.disabled=true;pb.disabled=true;return}
@@ -1081,7 +1134,7 @@ document.addEventListener("keydown",function(e){var tg=e.target.tagName;if(tg===
 
 /* boot */
 computePulse();renderConsole();renderTop();renderDossier();renderFilters();renderStream();renderBrief();renderPanels();initRuleForm();evalRules();
-renderWorld();renderSocial();renderSchemes();readHash();setBadges();connectFeeds();
+renderWorld();renderSocial();renderSchemes();renderCyber();readHash();setBadges();connectFeeds();
 })();
 </script>
 
